@@ -1,0 +1,16 @@
+技术002K命令篇
+
+技术002K命令篇
+==============
+
+[]
+
+-  kubectl exec 执行的命令支持通配符
+
+kubectl exec transfer-api-http-push-log-47-55db4458cb-z7d56 sh – -c "ls
+/home/services/transfer/logs/*"
+
+终极命令
+
+k get pod -l env=api-http-push-log \| cut -d ’ ’ -f 1 \|grep transfer \|
+xargs -I{} kubectl exec {} sh – -c "ls /home/services/transfer/logs/*”

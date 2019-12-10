@@ -1,0 +1,58 @@
+技术002K学习资料
+
+技术002K学习资料
+================
+
+-  `技术002K学习资料 <>`__
+
+   -  `Blog <>`__
+   -  `GitHub 仓库 <>`__
+   -  `Twitter 账号 <>`__
+   -  `GPU参考资料 <>`__
+
+`从入门到大乘，才云开源内部 Kubernetes
+学习路径 <https://mp.weixin.qq.com/s/s423Fx6tcqcjMy1mL8rGmQ>`__\ 写的挺好的，目前对于这些了解的还是不够深入，所以需要自己TODO
+
+Blog
+----
+
+-  `Kubernetes
+   指南之核心原理 <https://kubernetes.feisky.xyz/he-xin-yuan-li/index>`__
+-  `kubectl run 的背后流程（难）：What happens when I type kubectl
+   run? <https://github.com/jamiehannaford/what-happens-when-k8s>`__\ `kubectl
+   创建 Pod
+   背后到底发生了什么？ <https://mp.weixin.qq.com/s/lcenZGKTkAcTT7DZrhBbvw>`__
+-  `jetstack <https://blog.jetstack.io/>`__
+-  `Docker Kubernetes Lab
+   Handbook <https://docker-k8s-lab.readthedocs.io/en/latest/>`__
+-  `K8s 学习最全知识图谱（内含
+   58个知识点链接) <https://mp.weixin.qq.com/s/msK9vVBxygTNqgajLSnAfQ>`__
+
+GitHub 仓库
+-----------
+
+Kubernetes Enhancement：关注新特性的讨论 Kubernetes
+Community：关注社区组织情况 CNCF TOC：关注 CNCF 进展，各种新项目讨论等
+Awesome Kubernetes：Kubernetes 项目之学不动系列
+
+关注 GitHub
+仓库可以让你了解最一手的进展，但是信息量一般较大，讨论很多难度也比较大。但对于大乘期的你来讲，这些应该不是问题
+。另外，GitHub 仓库还包含很多 Kubernetes
+系统内部设计，例如调度器的优化方案、资源垃圾回收方案等，值得了解和学习。
+
+Twitter 账号
+------------
+
+下面推荐几个 Kubernetes 项目核心人员的 Twitter，感兴趣的话题可以去交流。
+Tim Hockin Clayton Coleman Daniel Smith Brian Grant Vishnu Kannan Saad
+Ali Kelsey Hightower Joe Beda Brendan Burns Michelle Noorali
+除此之外，Twitter 上还有不少项目和其他 Weekly 性质的
+Twitter，推荐几个账号关注： Kube Weekly Kube List K8sMeetup
+中国社区（公众号 kuberneteschina2）
+官方论坛https://discuss.kubernetes.io/
+
+GPU参考资料
+-----------
+
+`基于 Kubernetes 的 GPU
+类型调度实现 <https://mp.weixin.qq.com/s/elt-P4ASilQuv9EfQdFTQw>`__
