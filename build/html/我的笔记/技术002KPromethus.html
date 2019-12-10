@@ -1,0 +1,258 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml" lang="zh_CN">
+  <head>
+    <meta charset="utf-8" />
+    <title>技术002KPromethus &#8212; mrmote&#39;s kubernetes note 1.0 文档</title>
+    <link rel="stylesheet" href="../_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/language_data.js"></script>
+    <script type="text/javascript" src="../_static/translations.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <link rel="index" title="索引" href="../genindex.html" />
+    <link rel="search" title="搜索" href="../search.html" />
+    <link rel="next" title="技术002KService" href="技术002KService.html" />
+    <link rel="prev" title="技术002KPod" href="技术002KPod.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>导航</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="总目录"
+             accesskey="I">索引</a></li>
+        <li class="right" >
+          <a href="技术002KService.html" title="技术002KService"
+             accesskey="N">下一页</a> |</li>
+        <li class="right" >
+          <a href="技术002KPod.html" title="技术002KPod"
+             accesskey="P">上一页</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">mrmote&#39;s kubernetes note 1.0 文档</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <p>技术002KPromethus</p>
+<div class="section" id="kpromethus">
+<h1>技术002KPromethus<a class="headerlink" href="#kpromethus" title="永久链接至标题">¶</a></h1>
+<ul class="simple">
+<li><p><a href="#id7"><span class="problematic" id="id8">`技术002KPromethus &lt;&gt;`__</span></a></p>
+<ul>
+<li><p><a href="#id7"><span class="problematic" id="id9">`参数解读&amp;存储实现原理 &lt;&gt;`__</span></a></p></li>
+<li><p><a href="#id7"><span class="problematic" id="id10">`容量规划 &lt;&gt;`__</span></a></p></li>
+<li><p><a href="#id7"><span class="problematic" id="id11">`高可用 &lt;&gt;`__</span></a></p></li>
+<li><p><a href="#id7"><span class="problematic" id="id12">`报警 &lt;&gt;`__</span></a></p>
+<ul>
+<li><p><a href="#id7"><span class="problematic" id="id13">`钉钉 &lt;&gt;`__</span></a></p></li>
+</ul>
+</li>
+<li><p><a href="#id7"><span class="problematic" id="id14">`Trouble &lt;&gt;`__</span></a></p></li>
+<li><p><a href="#id7"><span class="problematic" id="id15">`参考资料 &lt;&gt;`__</span></a></p></li>
+</ul>
+</li>
+</ul>
+<div class="section" id="id1">
+<h2>参数解读&amp;存储实现原理<a class="headerlink" href="#id1" title="永久链接至标题">¶</a></h2>
+<ol class="arabic simple">
+<li><p>Time sharding <img alt="image0" src="../_images/adb730137e91d147974f66e8c1a64bcb.png" /></p></li>
+<li><p>Index 将指标拆分成倒排索引（inverted index concept） 倒排索引
+<img alt="image1" src="../_images/a204bb4bbed3155ab5911090a43ba56a.png" /></p></li>
+<li><p>监控数据在磁盘的存储形式</p></li>
+</ol>
+<p>Prometheus
+按照两个小时为一个时间窗口，将两小时内产生的数据存储在一个块（Block）中。每个块都是一个单独的目录，里面含该时间窗口内的所有样本数据（chunks），元数据文件（meta.json）以及索引文件（index）。其中索引文件会将指标名称和标签索引到样板数据的时间序列中。此期间如果通过
+API 删除时间序列，删除记录会保存在单独的逻辑文件 tombstone 当中。</p>
+<p>当前样本数据所在的块会被直接保存在内存中，不会持久化到磁盘中。为了确保
+Prometheus 发生崩溃或重启时能够恢复数据，Prometheus
+启动时会通过预写日志（write-ahead-log(WAL)）重新记录，从而恢复数据。预写日志文件保存在
+wal 目录中，每个文件大小为 128MB。wal
+文件包括还没有被压缩的原始数据，所以比常规的块文件大得多。一般情况下，Prometheus
+会保留三个 wal
+文件，但如果有些高负载服务器需要保存两个小时以上的原始数据，wal
+文件的数量就会大于 3 个。</p>
+<p>最初两个小时的块最终会在后台被压缩成更长的块。 [info] 注意</p>
+<p>本地存储不可复制，无法构建集群，如果本地磁盘或节点出现故障，存储将无法扩展和迁移。因此我们只能把本地存储视为近期数据的短暂滑动窗口。如果你对数据持久化的要求不是很严格，可以使用本地磁盘存储多达数年的数据。</p>
+<ol class="arabic simple" start="4">
+<li><p>prlimit调整prometheus的fd数目</p></li>
+</ol>
+</div>
+<div class="section" id="id2">
+<h2>容量规划<a class="headerlink" href="#id2" title="永久链接至标题">¶</a></h2>
+<p>抓取间隔越大，数据越稀疏；抓取间隔越小，监控数据的时间分辨率越高，但所需的存储资源会增多。建议将该值设置在
+5s ~ 15s 之间。 1.{{}}可以取自定义的变量,$取环境变量
+2.rule的语法检测步骤 go get
+github.com/prometheus/prometheus/cmd/promtool promtool check rules
+/path/to/example.rules. 3.query curl promql</p>
+<p>curl -s
+<a class="reference external" href="http://10.120.16.13:9090/api/v1/query?query=container_cpu_usage_seconds_total">http://10.120.16.13:9090/api/v1/query?query=container_cpu_usage_seconds_total</a>
+| jq</p>
+<p>curl <a class="reference external" href="http://10.120.16.13:9090/api/v1">http://10.120.16.13:9090/api/v1</a>/targets显示默认的label</p>
+<p><a class="reference external" href="https://prometheus.io/docs/prometheus/latest/querying/api/#expression-query-result-formats">https://prometheus.io/docs/prometheus/latest/querying/api/#expression-query-result-formats</a>
+通过api来获取prom相关数据信息</p>
+<p>4，prom的一些命令参数 从2.0开始
+–web.enable-lifecycle允许动态加载prom的配置 if o.EnableLifecycle {
+router.Post(“/-/quit”, h.quit) router.Put(“/-/quit”, h.quit)
+router.Post(“/-/reload”, h.reload) router.Put(“/-/reload”, h.reload) }
+func (h <em>Handler) quit(w http.ResponseWriter, r</em>http.Request) {
+fmt.Fprintf(w, “Requesting termination… Goodbye!”) close(h.quitCh) }
+func (h <em>Handler) reload(w http.ResponseWriter, r</em>http.Request) { rc
+:= make(chan error) h.reloadCh &lt;- rc if err := &lt;-rc; err != nil {</p>
+<p>http.Error(w, fmt.Sprintf(“failed to reload config: %s”, err),
+http.StatusInternalServerError)</p>
+<p>} } 5..prometheus
+需要两个接口做join操作，可以通过on同一个字段，group_right引入新的字段来实现。
+<a class="reference external" href="https://github.com/prometheus/prometheus/issues/2670">https://github.com/prometheus/prometheus/issues/2670</a></p>
+<p><a class="reference external" href="https://medium.com/&#64;amimahloof/kubernetes-promql-prometheus-cpu-aggregation-walkthrough-2c6fd2f941eb">https://medium.com/&#64;amimahloof/kubernetes-promql-prometheus-cpu-aggregation-walkthrough-2c6fd2f941eb</a></p>
+<p>最终实现公式如下所示：</p>
+<p>max(kube_pod_info{namespace=“<em>n***a*</em><em>m***e*</em><em>s***p*</em><em>a***c*</em><em>e</em>”,<em>p***o*</em><em>d</em>= “pod”})
+by (namespace,pod,pod_ip) * on(pod)</p>
+<p>group_right(pod_ip) label_replace(</p>
+<p>(sum(rate(container_cpu_usage_seconds_total{namespace=“<em>n***a*</em><em>m***e*</em><em>s***p*</em><em>a***c*</em><em>e</em>”,<em>p***o*</em><em>d***n​a*</em><em>m***e= “pod”,
+container!=“filebeat”}[1m])) by (pod_name)) /
+(sum(container_spec_cpu_quota{namespace=“*n***a*</em><em>m***e*</em><em>s***p*</em><em>a***c*</em><em>e</em>”,p**<em>o***d*</em><em>n</em>​<em>a***m*</em><em>e</em>= “pod”,
+container!=“filebeat”}) by (pod_name)
+/100000)<em>100,“pod”,“1”,“pod_name”,“(.+)”)
+max(kube_pod_info{namespace=“namespace”, pod=~“pod”}) by
+(namespace,pod,pod_ip)</em> on(pod) group_right(pod_ip) label_replace(
+(sum(container_memory_rss{namespace=“namespace”, pod_name=~“pod”,
+container!=“filebeat”}) by(pod_name) /
+sum(container_spec_memory_limit_bytes{namespace=“namespace”,
+pod_name=~“$pod”, container!=“filebeat”}) by(pod_name) *
+100),“pod”,“$1”,“pod_name”,“(.+)”)</p>
+<p>max(kube_pod_info{namespace=“<em>n***a*</em><em>m***e*</em><em>s***p*</em><em>a***c*</em><em>e</em>”,<em>p***o*</em><em>d</em>= “pod”})
+by (namespace,pod,pod_ip) * on(pod)</p>
+<p>group_right(pod_ip) label_replace(</p>
+<p>rate(container_network_receive_bytes_total{namespace=“<em>n***a*</em><em>m***e*</em><em>s***p*</em><em>a***c*</em><em>e</em>”,*p<strong>o</strong>d<strong>n​a</strong>m**e*= “pod”}[1m]),“pod”,“$1”,“pod_name”,“(.+)”)</p>
+<p>max(kube_pod_info{namespace=“<em>n***a*</em><em>m***e*</em><em>s***p*</em><em>a***c*</em><em>e</em>”,<em>p***o*</em><em>d</em>= “pod”})
+by (namespace,pod,pod_ip) * on(pod)</p>
+<p>group_right(pod_ip) label_replace(</p>
+<p>sum(kube_pod_container_resource_limits_cpu_cores{namespace=“<em>n***a*</em><em>m***e*</em><em>s***p*</em><em>a***c*</em><em>e</em>”,<em>p***o*</em><em>d</em>= “pod”,
+container!=“filebeat”}) by (pod),“pod”,“$1”,“pod_name”,“(.+)”)</p>
+<p>max(kube_pod_info{namespace=“<em>n***a*</em><em>m***e*</em><em>s***p*</em><em>a***c*</em><em>e</em>”,<em>p***o*</em><em>d</em>= “pod”})
+by (namespace,pod,pod_ip) * on(pod)</p>
+<p>group_right(pod_ip) label_replace(</p>
+<p>sum(kube_pod_container_resource_limits_memory_bytes{namespace=“<em>n***a*</em><em>m***e*</em><em>s***p*</em><em>a***c*</em><em>e</em>”,<em>p***o*</em><em>d</em>= “pod”,
+container!=“filebeat”}) by (pod),“pod”,“$1”,“pod_name”,“(.+)”)</p>
+<p>指标存放位置 kube</p>
+<p>container_cpu_usage_seconds_total{container_name=“POD”,cpu=“total”,,image=“docker2.yidian.com:5000/devops/pause:3.1”,instance=“10.126.53.9”,job=“kubernetes-cadvisor”,name=“k8s_POD_online-feedback-receiver-prod-1-d468dc8c8-9hjh4_dataplatform_033bc899-d2dc-11e9-82c1-1402ec8225a4_0”,namespace=“dataplatform”,pod_name=“online-feedback-receiver-prod-1-d468dc8c8-9hjh4”}</p>
+<p>container_name等于POD的是pause容器</p>
+</div>
+<div class="section" id="id3">
+<h2>高可用<a class="headerlink" href="#id3" title="永久链接至标题">¶</a></h2>
+<p><a class="reference external" href="https://ylzheng.com/2018/03/17/promethues-ha-deploy/">https://ylzheng.com/2018/03/17/promethues-ha-deploy/</a></p>
+</div>
+<div class="section" id="id4">
+<h2>报警<a class="headerlink" href="#id4" title="永久链接至标题">¶</a></h2>
+<div class="section" id="id5">
+<h3>钉钉<a class="headerlink" href="#id5" title="永久链接至标题">¶</a></h3>
+<p>./prometheus-webhook-dingtalk
+–ding.profile=‘webhook1=https://oapi.dingtalk.com/robot/send?access_token=89066027a7c9f112ac9ecb21d716d9a1bd000b3cc42a19453467373593fdfe49’</p>
+<p><code class="docutils literal notranslate"><span class="pre">curl</span> <span class="pre">-l</span> <span class="pre">-H</span> <span class="pre">&quot;Content-type:</span> <span class="pre">application/json&quot;</span> <span class="pre">-X</span> <span class="pre">POST</span> <span class="pre">-d</span> <span class="pre">'{&quot;msgtype&quot;:&quot;markdown&quot;,&quot;markdown&quot;:{&quot;title&quot;:&quot;title&quot;,&quot;text&quot;:&quot;text\n&gt;</span> <span class="pre">监控描述信息\n\n&gt;</span> <span class="pre">######</span> <span class="pre">告警时间</span> <span class="pre">\n&quot;},&quot;at&quot;:{&quot;atMobiles&quot;:[&quot;18811756877&quot;],&quot;isAtAll&quot;:true}}'</span> <span class="pre">https://oapi.dingtalk.com/robot/send?access_token=89066027a7c9f112ac9ecb21d716d9a1bd000b3cc42a19453467373593fdfe49</span> <span class="pre">curl</span> <span class="pre">'https://oapi.dingtalk.com/robot/send?access_token=89066027a7c9f112ac9ecb21d716d9a1bd000b3cc42a19453467373593fdfe49'</span> <span class="pre">\</span> <span class="pre">-H</span> <span class="pre">'Content-Type:</span> <span class="pre">application/json'</span> <span class="pre">\</span> <span class="pre">-d</span> <span class="pre">'{</span> <span class="pre">&quot;msgtype&quot;:</span> <span class="pre">&quot;text&quot;,</span> <span class="pre">&quot;text&quot;:</span> <span class="pre">{</span> <span class="pre">&quot;content&quot;:</span> <span class="pre">&quot;我就是我,</span> <span class="pre">是不一样的烟火&quot;</span> <span class="pre">},</span> <span class="pre">&quot;at&quot;:</span> <span class="pre">{</span> <span class="pre">&quot;atMobiles&quot;:</span> <span class="pre">[</span> <span class="pre">&quot;18811756877&quot;</span> <span class="pre">],</span> <span class="pre">&quot;isAtAll&quot;:</span> <span class="pre">false</span> <span class="pre">}</span> <span class="pre">}'</span></code></p>
+<p>docker run -p 8060:8060 timonwong/prometheus-webhook-dingtalk:latest
+/bin/prometheus-webhook-dingtalk
+–ding.profile=‘webhook1=https://oapi.dingtalk.com/robot/send?access_token=89066027a7c9f112ac9ecb21d716d9a1bd000b3cc42a19453467373593fdfe49’</p>
+</div>
+</div>
+<div class="section" id="trouble">
+<h2>Trouble<a class="headerlink" href="#trouble" title="永久链接至标题">¶</a></h2>
+<p>promethus内存异常</p>
+<p>promethus的的内存消耗大概60G左右，物理机的内存是64G，影响了物理机上的其他业务，平时占用内存就是5.4G，导致内存增加的原因是因为调用remote
+write写，remote write提示Error sending samples to remote storage”
+count=100 err=“Post <a class="reference external" href="http://10.136.160.40:8080/receive">http://10.136.160.40:8080/receive</a>: dial tcp
+10.136.160.40:8080: connect: connection timed
+out”导致内存增加，增加了大概60G</p>
+<p>promethus v1可以限制通过一下配置限制内存，v2不可以
+–storage.local.target-heap-size=26214400(25G)</p>
+<p>storage.local.target-heap-size用来控制heap的大小，由于Prometheus
+2.0引入了一个新的存储引擎，所以v1中的-storage.local.*指标都已经被移除了</p>
+</div>
+<div class="section" id="id6">
+<h2>参考资料<a class="headerlink" href="#id6" title="永久链接至标题">¶</a></h2>
+<p><a class="reference external" href="https://mp.weixin.qq.com/s/8ERjwvHX-Z3Pykx1dgy9uA">编写 Prometheus Exporter: 以阿里云 Exporter
+为例</a></p>
+<p><a class="reference external" href="https://mp.weixin.qq.com/s/jCn0vGT5MDknDq4XdcGV0A">Prometheus 监控架构 –
+生产级别</a> <a class="reference external" href="https://www.jianshu.com/p/93412a925da2">规划
+Prometheus 的存储用量</a></p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../index.html">目录</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">技术002KPromethus</a><ul>
+<li><a class="reference internal" href="#id1">参数解读&amp;存储实现原理</a></li>
+<li><a class="reference internal" href="#id2">容量规划</a></li>
+<li><a class="reference internal" href="#id3">高可用</a></li>
+<li><a class="reference internal" href="#id4">报警</a><ul>
+<li><a class="reference internal" href="#id5">钉钉</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#trouble">Trouble</a></li>
+<li><a class="reference internal" href="#id6">参考资料</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>上一个主题</h4>
+  <p class="topless"><a href="技术002KPod.html"
+                        title="上一章">技术002KPod</a></p>
+  <h4>下一个主题</h4>
+  <p class="topless"><a href="技术002KService.html"
+                        title="下一章">技术002KService</a></p>
+  <div role="note" aria-label="source link">
+    <h3>本页</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/我的笔记/技术002KPromethus.rst.txt"
+            rel="nofollow">显示源代码</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">快速搜索</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="转向" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>导航</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="总目录"
+             >索引</a></li>
+        <li class="right" >
+          <a href="技术002KService.html" title="技术002KService"
+             >下一页</a> |</li>
+        <li class="right" >
+          <a href="技术002KPod.html" title="技术002KPod"
+             >上一页</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">mrmote&#39;s kubernetes note 1.0 文档</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; 版权所有 2019, mrmote.
+      由 <a href="http://sphinx-doc.org/">Sphinx</a> 2.2.1 创建。
+    </div>
+  </body>
+</html>

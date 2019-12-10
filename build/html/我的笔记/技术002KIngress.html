@@ -1,0 +1,263 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml" lang="zh_CN">
+  <head>
+    <meta charset="utf-8" />
+    <title>技术002KIngress &#8212; mrmote&#39;s kubernetes note 1.0 文档</title>
+    <link rel="stylesheet" href="../_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/language_data.js"></script>
+    <script type="text/javascript" src="../_static/translations.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <link rel="index" title="索引" href="../genindex.html" />
+    <link rel="search" title="搜索" href="../search.html" />
+    <link rel="next" title="技术002KLog" href="技术002KLog.html" />
+    <link rel="prev" title="技术002KHPA" href="技术002KHPA.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>导航</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="总目录"
+             accesskey="I">索引</a></li>
+        <li class="right" >
+          <a href="技术002KLog.html" title="技术002KLog"
+             accesskey="N">下一页</a> |</li>
+        <li class="right" >
+          <a href="技术002KHPA.html" title="技术002KHPA"
+             accesskey="P">上一页</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">mrmote&#39;s kubernetes note 1.0 文档</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <p>技术002KIngress</p>
+<ul class="simple">
+<li><p><a href="#id3"><span class="problematic" id="id4">`技术002KIngress &lt;&gt;`__</span></a></p>
+<ul>
+<li><p><a href="#id3"><span class="problematic" id="id5">`Ingress &lt;&gt;`__</span></a></p>
+<ul>
+<li><p><a href="#id3"><span class="problematic" id="id6">`Nginx-Ingress &lt;&gt;`__</span></a></p></li>
+</ul>
+</li>
+<li><p><a href="#id3"><span class="problematic" id="id7">`其他服务暴露方式 &lt;&gt;`__</span></a></p>
+<ul>
+<li><p><a href="#id3"><span class="problematic" id="id8">`CLUSTERIP &lt;&gt;`__</span></a></p></li>
+<li><p><a href="#id3"><span class="problematic" id="id9">`NODEPORT &lt;&gt;`__</span></a></p></li>
+<li><p><a href="#id3"><span class="problematic" id="id10">`haproxy &lt;&gt;`__</span></a></p></li>
+</ul>
+</li>
+<li><p><a href="#id3"><span class="problematic" id="id11">`参考文献 &lt;&gt;`__</span></a></p></li>
+</ul>
+</li>
+</ul>
+<div class="section" id="kingress">
+<h1>技术002KIngress<a class="headerlink" href="#kingress" title="永久链接至标题">¶</a></h1>
+<div class="section" id="ingress">
+<h2>Ingress<a class="headerlink" href="#ingress" title="永久链接至标题">¶</a></h2>
+<p>一个集群可以配置多个Ingress。创建Ingress时，可以通过注解ingress.class表示那种ingress。</p>
+<ul class="simple">
+<li><p>性能优化</p></li>
+</ul>
+<p>由于NginxIngress
+Controller要监听物理机上的80端口，我们最初的做法是给他配置了hosrtport，但当大量业务上线时，我们发现QPS超过500/s就会出现无法转发数据包的情况。经过排查发现，系统软中断占用的CPU特别高，hostport会使用iptables进行数据包的转发，后来将Ingress
+Controller修改为hostnetwork模式，直接使用Docker的host模式，性能得到提升，QPS可以达到5k以上。</p>
+<ul class="simple">
+<li><p>Nginx配置优化</p></li>
+</ul>
+<p>Nginx
+IngressController大致的工作流程是先通过监听Service、Ingress等资源的变化然后根据Service、Ingress的信息以及nginx.temple文件，将每个service对应的endpoint填入模板中生成最终的Nginx配置。但是很多情况下模板中默认的配置参数并不满足我们的需求，这时需要通过kubernetes中ConfigMap机制基于Nginx
+Ingress Controller使用我们定制化的模板。</p>
+<ul class="simple">
+<li><p>日志回滚</p></li>
+</ul>
+<p>默认情况下Docker会将日志记录在系统的/var/lib/docker/container/xxxx下面的文件里，但是前端日志量是非常大的，很容易就会将系统盘写满，通过配置ConfigMap的方式，可以将日志目录改到主机上，通过配置logrotate服务可以实现日志的定时回滚、压缩等操作。</p>
+<ul class="simple">
+<li><p>服务应急</p></li>
+</ul>
+<p>当线上服务出现不可用的情况时，我们会准备一套应急的服务作为备用，一但服务出现问题，我们可以将流量切换到应急的服务上去。在k8s上，这一系列操作变得更加简单，这需再准备一套ingress规则，将生产环境的Servuce改为应急的Service，切换的时候通过kubectl
+replace -f xxx.yaml 将相应的Ingress替换，即可实现服务的无感知切换。</p>
+<div class="section" id="nginx-ingress">
+<h3>Nginx-Ingress<a class="headerlink" href="#nginx-ingress" title="永久链接至标题">¶</a></h3>
+<ul class="simple">
+<li><p>nginx-ingress方案测试通过</p></li>
+</ul>
+<p>（1）根据自己的需要创建ingress的deploy</p>
+<p>kubectl apply -f
+<a class="reference external" href="https://raw.githubusercontent.com/kubernetes/ingress-nginx/master/deploy/static/mandatory.yaml">https://raw.githubusercontent.com/kubernetes/ingress-nginx/master/deploy/static/mandatory.yaml</a></p>
+<p>（2）根据自己的需要创建svc</p>
+<p>kubectl apply -f
+<a class="reference external" href="https://raw.githubusercontent.com/kubernetes/ingress-nginx/master/deploy/static/provider/baremetal/service-nodeport.yaml">https://raw.githubusercontent.com/kubernetes/ingress-nginx/master/deploy/static/provider/baremetal/service-nodeport.yaml</a></p>
+<p>（3）参考文档3创建两个deploy，测试通过 参考文档</p>
+<p>文档1 NGINX Ingress Controller
+<a class="reference external" href="https://kubernetes.github.io/ingress-nginx/deploy/#prerequisite-generic-deployment-command">https://kubernetes.github.io/ingress-nginx/deploy/#prerequisite-generic-deployment-command</a></p>
+<p>文档2 ingress
+<a class="reference external" href="https://kubernetes.io/docs/concepts/services-networking/ingress/">https://kubernetes.io/docs/concepts/services-networking/ingress/</a></p>
+<p>文档3 Set up Ingress on Minikube with the NGINX Ingress Controller
+<a class="reference external" href="https://kubernetes.io/docs/tasks/access-application-cluster/ingress-minikube/">https://kubernetes.io/docs/tasks/access-application-cluster/ingress-minikube/</a></p>
+<ul>
+<li><p>示例配置文件</p>
+<p>apiVersion: v1 items:</p>
+<ul>
+<li><p>apiVersion: extensions/v1beta1</p>
+<p>kind: Ingress metadata: annotations:
+ingress.kubernetes.io/force-ssl-redirect: “true”
+ingress.kubernetes.io/rewrite-target: /
+kubernetes.io/ingress.class: nginx creationTimestamp:
+2019-05-10T05:29:28Z generation: 1 name: audio-callback-api
+namespace: default resourceVersion: “386759969” selfLink:
+/apis/extensions/v1beta1/namespaces/default/ingresses/audio-callback-api
+uid: 94dcfb45-72e4-11e9-804a-6c92bf4758bd spec: rules:</p>
+<ul>
+<li><p>host: cl-k8s.yidianzixun.com</p>
+<p>http: paths:</p>
+<ul>
+<li><p>backend:</p>
+<p>serviceName: audio-callback-api servicePort: http path:
+/audio status: loadBalancer: ingress:</p>
+</li>
+<li><p>{}</p></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>apiVersion: extensions/v1beta1</p>
+<p>kind: Ingress metadata: annotations:
+ingress.kubernetes.io/grpc-backend: “true”
+ingress.kubernetes.io/proxy-body-size: 16m
+ingress.kubernetes.io/ssl-redirect: “true”
+kubernetes.io/ingress.class: nginx creationTimestamp:
+2019-03-28T02:25:53Z generation: 1 name: compete-feedback-grpc
+namespace: default resourceVersion: “386759940” selfLink:
+/apis/extensions/v1beta1/namespaces/default/ingresses/compete-feedback-grpc
+uid: cf931119-5100-11e9-9b8a-5cb9019cfa9c spec: rules:</p>
+<ul>
+<li><p>http:</p>
+<p>paths:</p>
+<ul>
+<li><p>backend:</p>
+<p>serviceName: compete-feedback servicePort: grpc path:
+/feed.FeedBack status: loadBalancer: ingress:</p>
+</li>
+<li><p>{}</p></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<div class="section" id="id1">
+<h2>其他服务暴露方式<a class="headerlink" href="#id1" title="永久链接至标题">¶</a></h2>
+<div class="section" id="clusterip">
+<h3>CLUSTERIP<a class="headerlink" href="#clusterip" title="永久链接至标题">¶</a></h3>
+<ul class="simple">
+<li><p>ClusterIP是通过每个节点的kuber-proxy进程修改本地的iptables，使用DNAT的方式将ClusterIP转换为实际的endpoint地址。</p></li>
+</ul>
+</div>
+<div class="section" id="nodeport">
+<h3>NODEPORT<a class="headerlink" href="#nodeport" title="永久链接至标题">¶</a></h3>
+<ul class="simple">
+<li><p>NodePort是为了Kubernetes集群外部的应用方便访问kubernetes的服务而提供的一种方案，它会在每个机器上。</p></li>
+<li></li>
+</ul>
+</div>
+<div class="section" id="haproxy">
+<h3>haproxy<a class="headerlink" href="#haproxy" title="永久链接至标题">¶</a></h3>
+<p>百分点采用的Loadbalancer负载均衡器是基于haproxy，通过watcher
+Kubernetes-apiserver中service以及endpoint信息，<strong>动态修改haproxy转发规则</strong>来实现的。</p>
+</div>
+</div>
+<div class="section" id="id2">
+<h2>参考文献<a class="headerlink" href="#id2" title="永久链接至标题">¶</a></h2>
+<p><a class="reference external" href="https://mp.weixin.qq.com/s/ooPkJUgtwpdYGwpDjuyrdA">K8s 工程师必懂的 10 种 Ingress
+控制器</a></p>
+<p>你想要的百分点大规模Kubernetes集群应用实践来了</p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../index.html">目录</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">技术002KIngress</a><ul>
+<li><a class="reference internal" href="#ingress">Ingress</a><ul>
+<li><a class="reference internal" href="#nginx-ingress">Nginx-Ingress</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#id1">其他服务暴露方式</a><ul>
+<li><a class="reference internal" href="#clusterip">CLUSTERIP</a></li>
+<li><a class="reference internal" href="#nodeport">NODEPORT</a></li>
+<li><a class="reference internal" href="#haproxy">haproxy</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#id2">参考文献</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>上一个主题</h4>
+  <p class="topless"><a href="技术002KHPA.html"
+                        title="上一章">技术002KHPA</a></p>
+  <h4>下一个主题</h4>
+  <p class="topless"><a href="技术002KLog.html"
+                        title="下一章">技术002KLog</a></p>
+  <div role="note" aria-label="source link">
+    <h3>本页</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/我的笔记/技术002KIngress.rst.txt"
+            rel="nofollow">显示源代码</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">快速搜索</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="转向" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>导航</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="总目录"
+             >索引</a></li>
+        <li class="right" >
+          <a href="技术002KLog.html" title="技术002KLog"
+             >下一页</a> |</li>
+        <li class="right" >
+          <a href="技术002KHPA.html" title="技术002KHPA"
+             >上一页</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">mrmote&#39;s kubernetes note 1.0 文档</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; 版权所有 2019, mrmote.
+      由 <a href="http://sphinx-doc.org/">Sphinx</a> 2.2.1 创建。
+    </div>
+  </body>
+</html>

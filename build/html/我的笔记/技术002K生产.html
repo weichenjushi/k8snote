@@ -1,0 +1,423 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml" lang="zh_CN">
+  <head>
+    <meta charset="utf-8" />
+    <title>技术002K生产 &#8212; mrmote&#39;s kubernetes note 1.0 文档</title>
+    <link rel="stylesheet" href="../_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/language_data.js"></script>
+    <script type="text/javascript" src="../_static/translations.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <link rel="index" title="索引" href="../genindex.html" />
+    <link rel="search" title="搜索" href="../search.html" />
+    <link rel="next" title="技术002K生产TroubleMaking" href="技术002K生产TroubleMaking.html" />
+    <link rel="prev" title="技术002K压测" href="技术002K压测.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>导航</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="总目录"
+             accesskey="I">索引</a></li>
+        <li class="right" >
+          <a href="技术002K生产TroubleMaking.html" title="技术002K生产TroubleMaking"
+             accesskey="N">下一页</a> |</li>
+        <li class="right" >
+          <a href="技术002K压测.html" title="技术002K压测"
+             accesskey="P">上一页</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">mrmote&#39;s kubernetes note 1.0 文档</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <p>技术002K生产</p>
+<div class="section" id="k">
+<h1>技术002K生产<a class="headerlink" href="#k" title="永久链接至标题">¶</a></h1>
+<ul class="simple">
+<li><p><a href="#id10"><span class="problematic" id="id11">`技术002K生产 &lt;&gt;`__</span></a></p>
+<ul>
+<li><p><a href="#id10"><span class="problematic" id="id12">`环境搭建 &lt;&gt;`__</span></a></p></li>
+<li><p><a href="#id10"><span class="problematic" id="id13">`生产环境 &lt;&gt;`__</span></a></p></li>
+<li><p><a href="#id10"><span class="problematic" id="id14">`线上部署应用最佳实践 &lt;&gt;`__</span></a></p></li>
+<li><p><a href="#id10"><span class="problematic" id="id15">`k8s升级 &lt;&gt;`__</span></a></p></li>
+<li><p><a href="#id10"><span class="problematic" id="id16">`问题排查手册 &lt;&gt;`__</span></a></p></li>
+<li><p><a href="#id10"><span class="problematic" id="id17">`其他企业分享 &lt;&gt;`__</span></a></p></li>
+<li><p><a href="#id10"><span class="problematic" id="id18">`蔚来汽车 &lt;&gt;`__</span></a></p>
+<ul>
+<li><p><a href="#id10"><span class="problematic" id="id19">`ETCD数据备份容灾 &lt;&gt;`__</span></a></p></li>
+</ul>
+</li>
+<li><p><a href="#id10"><span class="problematic" id="id20">`k8s集群优化实践 &lt;&gt;`__</span></a></p></li>
+<li><p><a href="#id10"><span class="problematic" id="id21">`参考文献 &lt;&gt;`__</span></a></p></li>
+</ul>
+</li>
+</ul>
+<div class="section" id="id1">
+<h2>环境搭建<a class="headerlink" href="#id1" title="永久链接至标题">¶</a></h2>
+<p><a class="reference external" href="https://kubernetes.io/docs/reference/setup-tools/kubeadm/kubeadm/">kubeadm</a></p>
+<p><a class="reference external" href="https://kubernetes.io/docs/setup/production-environment/tools/kubeadm/high-availability/#steps-for-the-first-control-plane-node">Creating Highly Available Clusters with
+kubeadm</a></p>
+<p><a class="reference external" href="https://mp.weixin.qq.com/s/S9OvZa7oW7qo_9m4OznVtA">使用 kubeadm 安装最新 Kubernetes 1.15
+版本</a></p>
+<p><a class="reference external" href="https://github.com/kubernetes/kops">kops</a>
+<a class="reference external" href="https://github.com/kubernetes-sigs/kubespray">kubespray</a></p>
+</div>
+<div class="section" id="id2">
+<h2>生产环境<a class="headerlink" href="#id2" title="永久链接至标题">¶</a></h2>
+<ul class="simple">
+<li><p>部署方式</p></li>
+</ul>
+<p>https的域名访问是需要认证的，认证是通过dex插件来实现的，协议是oauth2认证
+nignx的upstream的后端ip是lvs的ip地址，lvs的后端是通过lvs-controller来控制的</p>
+<p>kube-controller-manager和kube-scheduler的选举策略是存放在kube-system命令空间下的Endpoint：kube-scheduler和kube-controller-manager，它们存储leader信息在注解control-plane.alpha.kubernetes.io/leader中</p>
+<ul class="simple">
+<li><p>网络模式</p></li>
+</ul>
+<p>macvlan</p>
+<ul class="simple">
+<li><p>日志搜集方案</p></li>
+</ul>
+<p>sidecar注入filebeat-&gt;logstash-&gt;kafka-&gt;log-dump落地（glusterfs）</p>
+<ul class="simple">
+<li><p>监控</p></li>
+</ul>
+<p>promethus采集数据+ alert-manager警告 + grafana呈现</p>
+<ul class="simple">
+<li><p>调度器</p></li>
+</ul>
+<p>k8s调度器以及调度器需要考虑的方面
+<a class="reference external" href="https://mp.weixin.qq.com/s/gfq1qghLW7g4gKZBBP17IA">https://mp.weixin.qq.com/s/gfq1qghLW7g4gKZBBP17IA</a></p>
+<ul class="simple">
+<li><p>生产环境k8s检查列表</p></li>
+</ul>
+<div class="figure align-default" id="id9">
+<img alt="DAFF1BF2-7934-4FD5-BC01-0FDB36196E23.jpg" src="../_images/cd27d31397147f7190a2617986d8eda7.jpg" />
+<p class="caption"><span class="caption-text">DAFF1BF2-7934-4FD5-BC01-0FDB36196E23.jpg</span><a class="headerlink" href="#id9" title="永久链接至图片">¶</a></p>
+</div>
+<ul class="simple">
+<li><p>benchmark</p></li>
+</ul>
+<p><a class="reference external" href="https://github.com/kubernetes/community/blob/452f681d92d98d6d62dfb24fbc9c8da10935632c/contributors/devel/sig-scalability/kubemark-guide.md">kubemark-guide</a></p>
+</div>
+<div class="section" id="id3">
+<h2>线上部署应用最佳实践<a class="headerlink" href="#id3" title="永久链接至标题">¶</a></h2>
+</div>
+<div class="section" id="k8s">
+<h2>k8s升级<a class="headerlink" href="#k8s" title="永久链接至标题">¶</a></h2>
+<ul class="simple">
+<li><p>升级步骤</p></li>
+</ul>
+<p>一般遵循先升级 Server，再升级 Client 的做法。对 kubernetes 来说，先升级
+kube-apiserver，再升级 controllers，最后灰度升级 kubelet。先升级
+kube-apiserver 的原因是 server 是对外提供服务（接口）的，kubernetes
+遵循向前兼容两个版本的机制，确保集群的兼容性，最后升级 kubelet
+是因为在节点数非常多的情况下，kubelet
+的升级需要一个较长的观察周期去灰度。同时提醒大家，一定要注意 kubelet
+升级对节点上运行容器的影响。</p>
+</div>
+<div class="section" id="id4">
+<h2>问题排查手册<a class="headerlink" href="#id4" title="永久链接至标题">¶</a></h2>
+<ul class="simple">
+<li><p>网络问题</p></li>
+<li><p>网络和磁盘问题 <a class="reference external" href="https://mp.weixin.qq.com/s/fCpcAa92-mY2yiRc6BpKqg">磁盘 IO 和网络 IO
+该如何评估、监控、性能定位和优化？</a></p></li>
+</ul>
+</div>
+<div class="section" id="id5">
+<h2>其他企业分享<a class="headerlink" href="#id5" title="永久链接至标题">¶</a></h2>
+</div>
+<div class="section" id="id6">
+<h2>蔚来汽车<a class="headerlink" href="#id6" title="永久链接至标题">¶</a></h2>
+<div class="section" id="etcd">
+<h3>ETCD数据备份容灾<a class="headerlink" href="#etcd" title="永久链接至标题">¶</a></h3>
+<ul>
+<li><p>etcd数据备份</p>
+<p>#!/bin/sh</p>
+<p>source /etc/profile nowtime=<code class="docutils literal notranslate"><span class="pre">date</span> <span class="pre">+%Y%m%d%H%M</span></code> # 备份的数据目录
+workdir=“/data/etcd-bak” # etcd的数据目录 datadir=“/data/etcd”
+ep=<code class="docutils literal notranslate"><span class="pre">/sbin/ip</span> <span class="pre">addr|grep</span> <span class="pre">eth0|sed</span> <span class="pre">-nr</span> <span class="pre">'s#^.*inet</span> <span class="pre">(.*)/22.*$#\1#gp'</span></code>
+capath=“/etc/kubernetes/ssl/ca.pem” certpath=“/etc/etcd/ssl/etcd.pem”
+keypath=“/etc/etcd/ssl/etcd-key.pem”
+etcdctlpath=“–endpoints”<a class="reference external" href="https://">https://</a><span class="math notranslate nohighlight">\({ep}:2379&quot; --cacert=\)</span>capath
+–cert=<span class="math notranslate nohighlight">\(certpath --key=\)</span>keypath” hostname=<code class="docutils literal notranslate"><span class="pre">hostname</span></code>
+alertcontent=“<span class="math notranslate nohighlight">\(hostname-etcd-bak-is-false-please-check-etcd-\)</span>{nowtime}”
+# 备份数据保留天数 delday=7
+s3path=“s3://etcd/etcd-<span class="math notranslate nohighlight">\({ep}&quot;  s3alertcontent=&quot;\)</span>hostname-etcd-snapshot-to-s3-false-please-check”
+etcdctlcmd=<code class="docutils literal notranslate"><span class="pre">whereis</span> <span class="pre">etcdctl|awk</span> <span class="pre">'{print</span> <span class="pre">$NF}'</span></code></p>
+<p>function deloldbak () { find
+<span class="math notranslate nohighlight">\(workdir -name &quot;etcd-*.gz&quot; -mtime +\)</span>{delday}|xargs rm -f }</p>
+<p>if [ ! -f /data/etcd-bak/etcd-${nowtime}.tar.gz ];then mkdir -p
+/data/etcd-bak/etcd-<span class="math notranslate nohighlight">\({nowtime}/  else  echo &quot;need wait to next time&quot;  echo &quot;need wait to next time&quot; &gt;&gt;\)</span>workdir/etcd-bak.log
+exit 1 fi</p>
+<p>echo “=================================== begin $nowtime
+==================================” echo
+“=================================== begin
+<span class="math notranslate nohighlight">\(nowtime ==================================&quot; &gt;&gt;\)</span>workdir/etcd-bak.log
+export ETCDCTL_API=3 echo”=================================== run
+snapshoting =================================”
+&gt;&gt;$workdir/etcd-bak.log $etcdctlcmd $etcdctlpath snapshot save
+<span class="math notranslate nohighlight">\(workdir/etcd-\)</span>{nowtime}/snap-<span class="math notranslate nohighlight">\({nowtime}.db &gt;&gt;\)</span>workdir/etcd-bak.log
+echo “=================================== run snapshoting
+=================================” &gt;&gt;$workdir/etcd-bak.log if [ $?
+-eq 0 ] then echo “etcd snapshot
+etcd-<span class="math notranslate nohighlight">\({nowtime}/snap-\)</span>{nowtime}.db is successful” echo “etcd
+snapshot etcd-<span class="math notranslate nohighlight">\({nowtime}/snap-\)</span>{nowtime}.db is successful”
+&gt;&gt;<span class="math notranslate nohighlight">\(workdir/etcd-bak.log  else  echo &quot;etcd snapshot etcd-\)</span>{nowtime}/snap-<span class="math notranslate nohighlight">\({nowtime}.db is failed&quot;  echo &quot;etcd snapshot etcd-\)</span>{nowtime}/snap-<span class="math notranslate nohighlight">\({nowtime}.db is failed&quot; &gt;&gt;\)</span>workdir/etcd-bak.log
+fi</p>
+<p>cp -fr $datadir/* <span class="math notranslate nohighlight">\(workdir/etcd-\)</span>{nowtime}/ if [ $? -eq 0 ]
+then echo “etcd snapshot
+etcd-<span class="math notranslate nohighlight">\({nowtime}/member is successful&quot;  echo &quot;etcd snapshot etcd-\)</span>{nowtime}/member
+is successful”
+&gt;&gt;<span class="math notranslate nohighlight">\(workdir/etcd-bak.log  else  echo &quot;etcd snapshot etcd-\)</span>{nowtime}/member
+is failed” echo “etcd snapshot
+etcd-<span class="math notranslate nohighlight">\({nowtime}/member is failed&quot; &gt;&gt;\)</span>workdir/etcd-bak.log fi</p>
+<p>$etcdctlcmd $etcdctlpath –write-out=table endpoint status $etcdctlcmd
+<span class="math notranslate nohighlight">\(etcdctlpath --write-out=table endpoint status &gt;&gt;\)</span>workdir/etcd-bak.log</p>
+<p>cd <span class="math notranslate nohighlight">\(workdir  tar zcf ./etcd-\)</span>{nowtime}.tar.gz
+etcd-<span class="math notranslate nohighlight">\({nowtime}  rm -fr etcd-\)</span>{nowtime} aws s3 cp
+<span class="math notranslate nohighlight">\(workdir/etcd-\)</span>{nowtime}.tar.gz $s3path/ if [ $? -eq 0 ] then
+echo “etcd snapshot s3 is successful” echo “etcd snapshot s3 is
+successful”
+&gt;&gt;<span class="math notranslate nohighlight">\(workdir/etcd-bak.log  else  echo &quot;etcd snapshot s3 is failed&quot;  echo &quot;etcd snapshot s3 is failed&quot; &gt;&gt;\)</span>workdir/etcd-bak.log
+fi deloldbak</p>
+<p>echo “=================================== end <code class="docutils literal notranslate"><span class="pre">date</span> <span class="pre">+%Y%m%d%H%M%S</span></code>
+==================================” echo
+“=================================== end <code class="docutils literal notranslate"><span class="pre">date</span> <span class="pre">+%Y%m%d%H%M%S</span></code>
+==================================” &gt;&gt;$workdir/etcd-bak.log</p>
+</li>
+<li><p>etcd数据恢复</p>
+<p>#!/bin/bash</p>
+<p># 使用 etcdctl snapshot restore 生成各个节点的数据</p>
+<p># 比较关键的变量是 # –data-dir 需要是实际 etcd 运行时的数据目录 #
+–name –initial-advertise-peer-urls 需要用各个节点的配置 #
+–initial-cluster initial-cluster-token 需要和原集群一致 #
+注意http和https区别</p>
+<p># 无需更改 workdir=/root</p>
+<p># etcd1,2,3为节点名称 ETCD1,2,3为对应节点ip ETCD_1=1.1.1.1
+ETCD_2=2.2.2.2 ETCD_3=3.3.3.3 etcd1=etcd1 etcd2=etcd2 etcd3=etcd3</p>
+<p># 同上面一样需要对应设置 arra=(1.1.1.1 2.2.2.2 3.3.3.3) arrb=(etcd1
+etcd2 etcd3)</p>
+<p># etcd是否使用https tls加密如果使用需要配置证书，若是http请置空此变量
+etcdkey=“–cacert=/etc/kubernetes/ssl/ca.pem
+–cert=/etc/etcd/ssl/etcd.pem –key=/etc/etcd/ssl/etcd-key.pem” #
+恢复数据存放目录，只是用于恢复存放数据，可以随意设置，跟原有的路径没有关系
+etcddatapath=“/root/etcd-recover-data/etcd” # 备份数据根路径
+bakdatapath=“/data/etcd-bak” # 备份数据完整路径
+bakdbpath=“$bakdatapath/etcd-201906161945/snap-201906161945.db” #
+ansible site执行路径 ansiblepath=“/root/etcd-bak-ansible” function
+ansibleoperate () { rm -fr
+$ansiblepath/roles/etcd-bak-ansible/files/<em>cp -fr $(echo
+$etcddatapath|awk -F “[/]” ‘{print “/”$2“/”$3}’)/</em>
+$ansiblepath/roles/etcd-bak-ansible/files/ cd $ansiblepath
+ansible-playbook -i hosts site.yaml }</p>
+<p>if [ ! -d $(echo $etcddatapath|awk -F “[/]” ‘{print “/”$2“/”$3}’)
+];then mkdir -p $(echo $etcddatapath|awk -F “[/]” ‘{print
+“/”$2“/”$3}’) fi</p>
+<p>for i in <span class="math notranslate nohighlight">\({arra[&#64;]}  do  echo -e &quot;\t\)</span>i:raw-latex:<cite>c”</cite>
+&gt;&gt;<span class="math notranslate nohighlight">\(workdir/etcdiplist.log  #echo -e &quot;\)</span>i” done</p>
+<p>for i in <span class="math notranslate nohighlight">\({arrb[&#64;]}  do  echo -e &quot;\t\)</span>i:raw-latex:<cite>c”</cite>
+&gt;&gt;<span class="math notranslate nohighlight">\(workdir/etcdnamelist.log  #echo -e &quot;\)</span>i” done</p>
+<p>while true do let cnt++
+etcdiplist=<code class="docutils literal notranslate"><span class="pre">awk</span> <span class="pre">-v</span> <span class="pre">column=$cnt</span> <span class="pre">'{print</span> <span class="pre">$column}'</span> <span class="pre">$workdir/etcdiplist.log</span></code>
+etcdnamelist=<code class="docutils literal notranslate"><span class="pre">awk</span> <span class="pre">-v</span> <span class="pre">column=$cnt</span> <span class="pre">'{print</span> <span class="pre">$column}'</span> <span class="pre">$workdir/etcdnamelist.log</span></code></p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span> if [ &quot;$etcdiplist&quot; = &quot;&quot; ]
+     then
+         echo &quot;conf is down will to break&quot;
+         break
+ fi
+echo $etcdiplist $etcdnamelist
+export ETCDCTL_API=3
+</pre></div>
+</div>
+<div class="line-block">
+<div class="line">#
+如果用原有member中的db恢复，由于不存在完整的hash性，需要在下面添加
+–skip-hash-check  跳过hash检查 etcdctl snapshot $etcdkey restore
+<span class="math notranslate nohighlight">\(bakdbpath \
+ --data-dir=\)</span>etcddatapath</div>
+<div class="line">–name $etcdnamelist</div>
+<div class="line">–initial-cluster
+<span class="math notranslate nohighlight">\({etcd1}=https://\)</span>{ETCD_1}:2380,<span class="math notranslate nohighlight">\({etcd2}=https://\)</span>{ETCD_2}:2380,<span class="math notranslate nohighlight">\({etcd3}=https://\)</span>{ETCD_3}:2380</div>
+<div class="line">–initial-cluster-token etcd-cluster-0</div>
+<div class="line">–initial-advertise-peer-urls <a class="reference external" href="https://$etcdiplist:2380">https://$etcdiplist:2380</a> &amp;&amp;</div>
+<div class="line">mv $etcddatapath $(echo $etcddatapath|awk -F “[/]” ’{print
+“/”$2“/”<span class="math notranslate nohighlight">\(3}')/etcd_\)</span>etcdiplist</div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">echo</span> <span class="s2">&quot;--initial-cluster $</span><span class="si">{etcd1}</span><span class="s2">=https://$</span><span class="si">{ETCD_1}</span><span class="s2">:2380,$</span><span class="si">{etcd2}</span><span class="s2">=https://$</span><span class="si">{ETCD_2}</span><span class="s2">:2380,$</span><span class="si">{etcd3}</span><span class="s2">=https://$</span><span class="si">{ETCD_3}</span><span class="s2">:2380 &quot;</span>
+</pre></div>
+</div>
+<p>done</p>
+<p>rm -f $workdir/etcdiplist.log rm -f $workdir/etcdnamelist.log</p>
+<p>#如果不需要ansible自动恢复集群，需要手动恢复的话请注释以下操作
+ansibleoperate</p>
+</li>
+<li><p>镜像仓库升级</p>
+<p>备份之前先停止老的harbor cd harbor docker-compose down
+备份原来的harbor目录 mv harbor /my_backup_dir/harbor 备份数据库 cp -r
+/data/database /my_backup_dir/ 后续升级镜像下载 docker pull
+goharbor/harbor-migrator:[tag] 升级harbor,cfg或者harbor.yml文件
+docker run -it –rm -v
+${harbor_cfg}:/harbor-migration/harbor-cfg/harbor.cfg -v
+${harbor_yml}:/harbor-migration/harbor-cfg-out/harbor.yml
+goharbor/harbor-migrator:[tag] –cfg up
+如果没有yaml文件，低版本理论上只有cfg文件，那就升级cfg文件就可以了
+docker run -it –rm -v
+${harbor_cfg}:/harbor-migration/harbor-cfg/harbor.cfg
+goharbor/harbor-migrator:[tag] –cfg up 解压新的版本离线包 tar -zxvf
+harbor-offline-installer-v1.7.4.tgz 覆盖harbor.cfg
+把之前升级的harbor.cfg文件或者yml文件拷贝到新版本解压的目录里替换相应的文件
+cd harbor mv harbor.cfg harbor.bak cp /root/harbor-bak/harbor.cfg .
+安装Notary，Clair和Helm Chart服务
+安装之前可以perpare脚本生成下配置文件 ./install.sh –with-notary
+–with-clair –with-chartmuseum 进行查看 docker-compose -f
+./docker-compose.yml -f ./docker-compose.clair.yml ps
+10.清除旧版本镜像 docker images|grep 1.6.2| awk ‘{print $3}’|xargs
+docker rmi</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="section" id="id7">
+<h2>k8s集群优化实践<a class="headerlink" href="#id7" title="永久链接至标题">¶</a></h2>
+<p>Kube-on-kube-Operator 通过Operator来管理集群 1. etcd从v2升级到v3 2.
+数据格式转化为protobuf 3. 其他优化 我们在 Kubernetes
+的最近三次发布中做出了几十项优化，包括：</p>
+<ul class="simple">
+<li><p>调度器优化（ 5-10 倍的调度吞吐）</p></li>
+<li><p>优化控制器设计，降低了 controller-manager 的资源消耗</p></li>
+</ul>
+<p>参见：<a class="reference external" href="https://github.com/kubernetes/community/blob/master/contributors/devel/controllers.md">https://github.com/kubernetes/community/blob/master/contributors/devel/controllers.md</a></p>
+<ul class="simple">
+<li><p>对 API Server 的部分操作进行优化（转换、深度复制、patch）</p></li>
+</ul>
+<p>降低 API Server 的内存占用（显著的降低了 API 调用的延迟时间） 1.
+优化关键技术</p>
+<p>服务画像：对应用的CPU、内存、网络、磁盘和网络 I/O
+容量和负载画像，了解应用的特征、资源规格和应用类型以及不同时间对资源的真实使用，然后从服务角度和时间维度进行相关性分析，从而进行整体调度和部署优化。</p>
+<p>亲和性和互斥性：哪些应用放在一起使整体计算能力比较少而吞吐能力比较高，它们就存在一定亲和性；反之如果应用之间存在资源竞争或相互影响，则它们之间就存在着互斥性。</p>
+<p>场景优先：美团点评的业务大都是基本稳定的场景，所以场景划分很有必要。例如一类业务对延迟非常敏感，即使在高峰时刻也不允许有太多的资源竞争产生，这种场景就要避免和减少资源竞争引起的延迟，保证资源充足；一类业务在有些时间段需要的CPU资源可能会突破配置的上限，我们通过CPU
+Set化的方式让这类业务共享这部分资源，以便能够突破申请规格的机器资源限制，不仅服务能够获得更高的性能表现，同时也把空闲的资源利用了起来，资源使用率进一步提升。</p>
+<p>弹性伸缩：应用部署做到流量预测、自动伸缩、基于规则的高低峰伸缩以及基于机器学习的伸缩机制。
+精细化资源调配：基于资源共享和隔离技术做到了精细化的资源调度和分配，例如Numa绑定、任务优先级、CPU
+Set化等等。 2. 策略优化
+调度策略的主要作用在两方面，一方面是按照既定策略部署目标机器；二是能做到集群资源的排布最优。</p>
+<p>亲和性：有调用关系和依赖的应用，或哪些应用放在一起能使整体计算能力比较少、吞吐能力比较高，这些应用间就存在一定亲和性。我们的CPU
+Set化即是利用了对CPU的偏好构建应用的亲和性约束，让不同CPU偏好的应用互补。</p>
+<p>互斥性：跟亲和性相对，主要是对有竞争关系或业务干扰的应用在调度时尽量分开部署。</p>
+<p>应用优先级：应用优先级的划分是为我们解决资源竞争提供了前提。当前当容器发生资源竞争时，我们无法决策究竟应该让谁获得资源，当有了应用优先级的概念后，我们可以做到，在调度层，限制单台宿主机上重要应用的个数，减少单机的资源竞争，也为单机底层解决资源竞争提供可能；在宿主机层，根据应用优先级分配资源，保证重要应用的资源充足，同时也可运行低优先级应用。</p>
+<p>打散性：应用的打散主要是为了容灾，在这里分为不同级别的打散。我们提供了不同级别的打散粒度，包括宿主机、Tor、机房、Zone等等。
+隔离与独占：这是一类特殊的应用，必须是独立使用一台宿主机或虚拟机隔离环境部署，例如搜索团队的业务。
+特殊资源：特殊资源是满足某些业务对GPU、SSD、特殊网卡等特殊硬件需求。 3.
+优先满足和保证 API Server 计算资源需求 4. 均衡 API Server 负载 5. 开启
+NodeLease Feature Kubelet 会使用 Update Node Status
+的方式更新节点心跳，而一次这样的心跳会向 API Server 发送大约 10 KB
+数据量。</p>
+<p>在大规模场景下，API Server 处理心跳请求是非常大的开销。而开启 NodeLease
+之后，Kubelet 会使用非常轻量的 NodeLease 对象 (0.1 KB) 更新请求替换老的
+Update Node Status 方式，这大大减轻了 API Server 的负担。在上线
+NodeLease 功能之后，集群 API Server 开销的 CPU 大约降低了一半。</p>
+<ol class="arabic simple" start="6">
+<li><p>修复请求链路中丢失 Context 的场景</p></li>
+<li><p>优化客户端行为</p></li>
+</ol>
+<p>开发团队强制要求所有客户端使用 Informer 去 List/Watch
+资源，并且禁止在处理逻辑里面直接调用 Client 去向 API Server List 资源。</p>
+</div>
+<div class="section" id="id8">
+<h2>参考文献<a class="headerlink" href="#id8" title="永久链接至标题">¶</a></h2>
+<ul class="simple">
+<li><p>集群优化篇</p></li>
+</ul>
+<p><a class="reference external" href="https://kubernetes.io/blog/2017/03/scalability-updates-in-kubernetes-1-6/">Scalability updates in Kubernetes 1.6: 5,000 node and 150,000 pod
+clusters</a></p>
+<p><a class="reference external" href="https://www.tuicool.com/articles/ArUZNzy">美团点评Kubernetes集群管理实践</a></p>
+<p><a class="reference external" href="https://www.infoq.cn/article/8b_w7UEKgoGXOuqpGI8P">一年时间打造全球最大规模之一的 Kubernetes
+集群，蚂蚁金服怎么做到的？</a></p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../index.html">目录</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">技术002K生产</a><ul>
+<li><a class="reference internal" href="#id1">环境搭建</a></li>
+<li><a class="reference internal" href="#id2">生产环境</a></li>
+<li><a class="reference internal" href="#id3">线上部署应用最佳实践</a></li>
+<li><a class="reference internal" href="#k8s">k8s升级</a></li>
+<li><a class="reference internal" href="#id4">问题排查手册</a></li>
+<li><a class="reference internal" href="#id5">其他企业分享</a></li>
+<li><a class="reference internal" href="#id6">蔚来汽车</a><ul>
+<li><a class="reference internal" href="#etcd">ETCD数据备份容灾</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#id7">k8s集群优化实践</a></li>
+<li><a class="reference internal" href="#id8">参考文献</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>上一个主题</h4>
+  <p class="topless"><a href="技术002K压测.html"
+                        title="上一章">技术002K压测</a></p>
+  <h4>下一个主题</h4>
+  <p class="topless"><a href="技术002K生产TroubleMaking.html"
+                        title="下一章">技术002K生产TroubleMaking</a></p>
+  <div role="note" aria-label="source link">
+    <h3>本页</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/我的笔记/技术002K生产.rst.txt"
+            rel="nofollow">显示源代码</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">快速搜索</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="转向" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>导航</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="总目录"
+             >索引</a></li>
+        <li class="right" >
+          <a href="技术002K生产TroubleMaking.html" title="技术002K生产TroubleMaking"
+             >下一页</a> |</li>
+        <li class="right" >
+          <a href="技术002K压测.html" title="技术002K压测"
+             >上一页</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">mrmote&#39;s kubernetes note 1.0 文档</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; 版权所有 2019, mrmote.
+      由 <a href="http://sphinx-doc.org/">Sphinx</a> 2.2.1 创建。
+    </div>
+  </body>
+</html>

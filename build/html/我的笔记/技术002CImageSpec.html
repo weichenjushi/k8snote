@@ -1,0 +1,313 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml" lang="zh_CN">
+  <head>
+    <meta charset="utf-8" />
+    <title>技术002CImageSpec &#8212; mrmote&#39;s kubernetes note 1.0 文档</title>
+    <link rel="stylesheet" href="../_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/language_data.js"></script>
+    <script type="text/javascript" src="../_static/translations.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <link rel="index" title="索引" href="../genindex.html" />
+    <link rel="search" title="搜索" href="../search.html" />
+    <link rel="next" title="技术002COCI" href="技术002COCI.html" />
+    <link rel="prev" title="&lt;no title&gt;" href="model.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>导航</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="总目录"
+             accesskey="I">索引</a></li>
+        <li class="right" >
+          <a href="技术002COCI.html" title="技术002COCI"
+             accesskey="N">下一页</a> |</li>
+        <li class="right" >
+          <a href="model.html" title="&lt;no title&gt;"
+             accesskey="P">上一页</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">mrmote&#39;s kubernetes note 1.0 文档</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <p>技术002CImageSpec</p>
+<div class="section" id="cimagespec">
+<h1>技术002CImageSpec<a class="headerlink" href="#cimagespec" title="永久链接至标题">¶</a></h1>
+<p>[]</p>
+<p>Image Manifest - a document describing the components that make up a
+container image 描述了容器镜像的组件</p>
+<ul class="simple">
+<li><p>mediaType</p></li>
+</ul>
+<p>application/vnd.oci.image.layer.v1.tar
+application/vnd.oci.image.layer.v1.tar+gzip
+application/vnd.oci.image.layer.nondistributable.v1.tar
+application/vnd.oci.image.layer.nondistributable.v1.tar+gzip Image Index
+- an annotated index of image manifests Image Layout - a filesystem
+layout representing the contents of an image</p>
+<ul class="simple">
+<li><p>镜像每层的内容可能类似tar,zip的压缩文件，nfs的共享文件或者http/ftp/rsync的网络文件</p></li>
+<li><p>+gzip Media Types</p></li>
+</ul>
+<p>The media type application/vnd.oci.image.layer.v1.tar+gzip represents an
+application/vnd.oci.image.layer.v1.tar payload which has been compressed
+with gzip.</p>
+<p>The media type
+application/vnd.oci.image.layer.nondistributable.v1.tar+gzip represents
+an application/vnd.oci.image.layer.nondistributable.v1.tar payload which
+has been compressed with gzip.</p>
+<ul class="simple">
+<li><p>+zstd Media Types</p></li>
+</ul>
+<p>The media type application/vnd.oci.image.layer.v1.tar+zstd represents an
+application/vnd.oci.image.layer.v1.tar payload which has been compressed
+with zstd.</p>
+<p>The media type
+application/vnd.oci.image.layer.nondistributable.v1.tar+zstd represents
+an application/vnd.oci.image.layer.nondistributable.v1.tar payload which
+has been compressed with zstd.</p>
+<ul class="simple">
+<li><p>Distributable Format</p></li>
+</ul>
+<p>Layer Changesets for the media type
+application/vnd.oci.image.layer.v1.tar MUST be packaged in tar archive.</p>
+<p>Layer Changesets for the media type
+application/vnd.oci.image.layer.v1.tar MUST NOT include duplicate
+entries for file paths in the resulting tar archive.</p>
+<ul class="simple">
+<li><p>File Types支持的文件类型</p></li>
+</ul>
+<p>regular files directories sockets symbolic links block devices character
+devices FIFOs</p>
+<ul class="simple">
+<li><p>Non-Distributable Layers</p></li>
+</ul>
+<p>Due to legal requirements, certain layers may not be regularly
+distributable. Such “non-distributable” layers are typically downloaded
+directly from a distributor but never uploaded.</p>
+<p>Non-distributable layers SHOULD be tagged with an alternative mediatype
+of application/vnd.oci.image.layer.nondistributable.v1.tar.
+Implementations SHOULD NOT upload layers tagged with this media type;
+however, such a media type SHOULD NOT affect whether an implementation
+downloads the layer.</p>
+<p>Descriptors referencing non-distributable layers MAY include urls for
+downloading these layers directly; however, the presence of the urls
+field SHOULD NOT be used to determine whether or not a layer is
+non-distributable.</p>
+<p>Filesystem Layer - a changeset that describes a container’s filesystem
+该文档描述了如何序列化文件和文件的变化比如移除文件放到一个blob称layer。</p>
+<p>Image Configuration - a document determining layer ordering and
+configuration of the image suitable for translation into a runtime
+bundle 定义了layer的顺序和将image转换成运行的bundle</p>
+<ul class="simple">
+<li><p>OCI
+镜像是一个有序的文件层的集合和在容器运行环境中根据执行参数而改变。</p></li>
+<li><p>Layer</p></li>
+</ul>
+<p>Image filesystems are composed of layers.</p>
+<p>Each layer represents a set of filesystem changes in a tar-based layer
+format, recording files to be added, changed, or deleted relative to its
+parent layer. 每层是根据父层记录文件的增加修改和删除。</p>
+<p>Layers do not have configuration metadata such as environment variables
+or default arguments - these are properties of the image as a whole
+rather than any particular layer.
+层没有配置环境变量等元数据，环境变量是针对整个镜像而不是单个层的。</p>
+<p>Using a layer-based or union filesystem such as AUFS, or by computing
+the diff from filesystem snapshots, the filesystem changeset can be used
+to present a series of image layers as if they were one cohesive
+filesystem.
+通过计算文件系统快照的不同，文件系统改变集合代表一系列的镜像层。</p>
+<ul class="simple">
+<li><p>Image JSON</p></li>
+</ul>
+<p>Each image has an associated JSON structure which describes some basic
+information about the image such as date created, author, as well as
+execution/runtime configuration like its entrypoint, default arguments,
+networking, and volumes.
+每个镜像文件有一个JSON结构的文件，信息包括创建时间，作者，以及entrypoint和默认的参数、网络、volume等。</p>
+<p>The JSON structure also references a cryptographic hash of each layer
+used by the image, and provides history information for those layers.</p>
+<p>This JSON is considered to be immutable, because changing it would
+change the computed ImageID.</p>
+<p>Changing it means creating a new derived image, instead of changing the
+existing image.</p>
+<ul class="simple">
+<li><p>Layer DiffID</p></li>
+<li><p>Layer ChainID 根据Ln层生成Ln+1层的chainID</p></li>
+</ul>
+<p>ChainID(L₀) = DiffID(L₀) ChainID(L₀|…<a href="#id3"><span class="problematic" id="id4">|Lₙ₋₁|Lₙ) =
+Digest(ChainID(L₀|</span></a>…<a href="#id1"><span class="problematic" id="id2">|</span></a>Lₙ₋₁) + ” ” + DiffID(Lₙ))</p>
+<p>Let’s expand the definition of ChainID(A|B|C) to explore its internal
+structure:</p>
+<p>ChainID(A) = DiffID(A) ChainID(A|B) = Digest(ChainID(A) + ” ” +
+DiffID(B)) ChainID(A|B|C) = Digest(ChainID(A|B) + ” ” + DiffID(C))</p>
+<ul class="simple">
+<li><p>ImageID 每个镜像ID是它的配置文件的SHA256的hash值。</p></li>
+<li><p>Properties</p></li>
+</ul>
+<p>Note: Any OPTIONAL field MAY also be set to null, which is equivalent to
+being absent.</p>
+<p>created string, OPTIONAL</p>
+<p>An combined date and time at which the image was created, formatted as
+defined by RFC 3339, section 5.6.</p>
+<p>author string, OPTIONAL</p>
+<p>Gives the name and/or email address of the person or entity which
+created and is responsible for maintaining the image.</p>
+<p>architecture string, REQUIRED</p>
+<p>The CPU architecture which the binaries in this image are built to run
+on. Configurations SHOULD use, and implementations SHOULD understand,
+values listed in the Go Language document for GOARCH.</p>
+<p>os string, REQUIRED</p>
+<p>The name of the operating system which the image is built to run on.
+Configurations SHOULD use, and implementations SHOULD understand, values
+listed in the Go Language document for GOOS.</p>
+<p>config object, OPTIONAL</p>
+<p>The execution parameters which SHOULD be used as a base when running a
+container using the image. This field can be null, in which case any
+execution parameters should be specified at creation of the container.</p>
+<p>User string, OPTIONAL</p>
+<p>The username or UID which is a platform-specific structure that allows
+specific control over which user the process run as. This acts as a
+default value to use when the value is not specified when creating a
+container. For Linux based systems, all of the following are valid:
+user, uid, user:group, uid:gid, uid:group, user:gid. If group/gid is not
+specified, the default group and supplementary groups of the given
+user/uid in /etc/passwd from the container are applied.</p>
+<p>ExposedPorts object, OPTIONAL</p>
+<p>A set of ports to expose from a container running this image. Its keys
+can be in the format of: port/tcp, port/udp, port with the default
+protocol being tcp if not specified. These values act as defaults and
+are merged with any specified when creating a container. NOTE: This JSON
+structure value is unusual because it is a direct JSON serialization of
+the Go type map[string]struct{} and is represented in JSON as an object
+mapping its keys to an empty object.</p>
+<p>Env array of strings, OPTIONAL</p>
+<p>Entries are in the format of VARNAME=VARVALUE. These values act as
+defaults and are merged with any specified when creating a container.</p>
+<p>Entrypoint array of strings, OPTIONAL</p>
+<p>A list of arguments to use as the command to execute when the container
+starts. These values act as defaults and may be replaced by an
+entrypoint specified when creating a container.</p>
+<p>Cmd array of strings, OPTIONAL</p>
+<p>Default arguments to the entrypoint of the container. These values act
+as defaults and may be replaced by any specified when creating a
+container. If an Entrypoint value is not specified, then the first entry
+of the Cmd array SHOULD be interpreted as the executable to run.</p>
+<p>Volumes object, OPTIONAL</p>
+<p>A set of directories describing where the process is likely write data
+specific to a container instance. NOTE: This JSON structure value is
+unusual because it is a direct JSON serialization of the Go type
+map[string]struct{} and is represented in JSON as an object mapping its
+keys to an empty object.</p>
+<p>WorkingDir string, OPTIONAL</p>
+<p>Sets the current working directory of the entrypoint process in the
+container. This value acts as a default and may be replaced by a working
+directory specified when creating a container.</p>
+<p>Labels object, OPTIONAL</p>
+<p>The field contains arbitrary metadata for the container. This property
+MUST use the annotation rules.</p>
+<p>StopSignal string, OPTIONAL</p>
+<p>The field contains the system call signal that will be sent to the
+container to exit. The signal can be a signal name in the format
+SIGNAME, for instance SIGKILL or SIGRTMIN+3.</p>
+<p>rootfs object, REQUIRED</p>
+<p>The rootfs key references the layer content addresses used by the image.
+This makes the image config hash depend on the filesystem hash.</p>
+<p>type string, REQUIRED</p>
+<p>MUST be set to layers. Implementations MUST generate an error if they
+encounter a unknown value while verifying or unpacking an image.</p>
+<p>diff_ids array of strings, REQUIRED An array of layer content hashes
+(DiffIDs), in order from first to last. history array of objects,
+OPTIONAL</p>
+<p>Describes the history of each layer. The array is ordered from first to
+last. The object has the following fields:</p>
+<p>created string, OPTIONAL</p>
+<p>A combined date and time at which the layer was created, formatted as
+defined by RFC 3339, section 5.6.</p>
+<p>author string, OPTIONAL The author of the build point. created_by
+string, OPTIONAL The command which created the layer. comment string,
+OPTIONAL A custom message set when creating the layer. empty_layer
+boolean, OPTIONAL</p>
+<p>This field is used to mark if the history item created a filesystem
+diff. It is set to true if this history item doesn’t correspond to an
+actual layer in the rootfs section (for example, Dockerfile’s ENV
+command results in no change to the filesystem).</p>
+<p>Any extra fields in the Image JSON struct are considered implementation
+specific and MUST be ignored by any implementations which are unable to
+interpret them.</p>
+<p>Whitespace is OPTIONAL and implementations MAY have compact JSON with no
+whitespace.</p>
+<p>Conversion - a document describing how this translation should occur</p>
+<p>Descriptor - a reference that describes the type, metadata and content
+address of referenced content</p>
+<ul class="simple">
+<li><p>OCI镜像的层是通过Merkle树有向无循环调度来组织的。</p></li>
+</ul>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h4>上一个主题</h4>
+  <p class="topless"><a href="model.html"
+                        title="上一章">&lt;no title&gt;</a></p>
+  <h4>下一个主题</h4>
+  <p class="topless"><a href="技术002COCI.html"
+                        title="下一章">技术002COCI</a></p>
+  <div role="note" aria-label="source link">
+    <h3>本页</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/我的笔记/技术002CImageSpec.rst.txt"
+            rel="nofollow">显示源代码</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">快速搜索</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="转向" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>导航</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="总目录"
+             >索引</a></li>
+        <li class="right" >
+          <a href="技术002COCI.html" title="技术002COCI"
+             >下一页</a> |</li>
+        <li class="right" >
+          <a href="model.html" title="&lt;no title&gt;"
+             >上一页</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">mrmote&#39;s kubernetes note 1.0 文档</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; 版权所有 2019, mrmote.
+      由 <a href="http://sphinx-doc.org/">Sphinx</a> 2.2.1 创建。
+    </div>
+  </body>
+</html>

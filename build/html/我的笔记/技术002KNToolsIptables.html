@@ -1,0 +1,139 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml" lang="zh_CN">
+  <head>
+    <meta charset="utf-8" />
+    <title>技术002KNToolsIptables &#8212; mrmote&#39;s kubernetes note 1.0 文档</title>
+    <link rel="stylesheet" href="../_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/language_data.js"></script>
+    <script type="text/javascript" src="../_static/translations.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <link rel="index" title="索引" href="../genindex.html" />
+    <link rel="search" title="搜索" href="../search.html" />
+    <link rel="next" title="技术002KNToolsTCPDUMP" href="技术002KNToolsTCPDUMP.html" />
+    <link rel="prev" title="技术002KNToolsIperf" href="技术002KNToolsIperf.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>导航</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="总目录"
+             accesskey="I">索引</a></li>
+        <li class="right" >
+          <a href="技术002KNToolsTCPDUMP.html" title="技术002KNToolsTCPDUMP"
+             accesskey="N">下一页</a> |</li>
+        <li class="right" >
+          <a href="技术002KNToolsIperf.html" title="技术002KNToolsIperf"
+             accesskey="P">上一页</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">mrmote&#39;s kubernetes note 1.0 文档</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <p>技术002KNToolsIptables</p>
+<div class="section" id="kntoolsiptables">
+<h1>技术002KNToolsIptables<a class="headerlink" href="#kntoolsiptables" title="永久链接至标题">¶</a></h1>
+<p>[] 1. Linux防火墙(Iptables)重启系统生效 开启： chkconfig iptables on
+关闭： chkconfig iptables off 2.Linux防火墙(Iptables)
+即时生效，重启后失效 开启： service iptables start 关闭： service
+iptables stop 规则列表 iptables –line-numbers -nvL Chain INPUT (policy
+ACCEPT 0 packets, 0 bytes) num pkts bytes target prot opt in out source
+destination 1 126G 214T ACCEPT all – * * 0.0.0.0/0 0.0.0.0/0 state
+RELATED,ESTABLISHED 2 39M 2738M ACCEPT icmp – * * 0.0.0.0/0 0.0.0.0/0
+3 3347K 177M ACCEPT all – lo * 0.0.0.0/0 0.0.0.0/0 4 660M 37G ACCEPT
+all – eth0 * 10.0.0.0/8 0.0.0.0/0</p>
+<p>5 232M 15G REJECT all – * * 0.0.0.0/0 0.0.0.0/0 reject-with
+icmp-host-prohibited</p>
+<p>6 0 0 DROP all – * * 0.0.0.0/0 0.0.0.0/0 Chain FORWARD (policy ACCEPT
+0 packets, 0 bytes) num pkts bytes target prot opt in out source
+destination 1 0 0 DOCKER-ISOLATION all – * * 0.0.0.0/0 0.0.0.0/0 2 0 0
+DOCKER all – * docker0 0.0.0.0/0 0.0.0.0/0 3 0 0 ACCEPT all – *
+docker0 0.0.0.0/0 0.0.0.0/0 ctstate RELATED,ESTABLISHED 4 0 0 ACCEPT all
+– docker0 !docker0 0.0.0.0/0 0.0.0.0/0 5 0 0 ACCEPT all – docker0
+docker0 0.0.0.0/0 0.0.0.0/0 6 0 0 REJECT all – * * 0.0.0.0/0 0.0.0.0/0
+reject-with icmp-host-prohibited Chain OUTPUT (policy ACCEPT 50G
+packets, 57T bytes) num pkts bytes target prot opt in out source
+destination Chain DOCKER (1 references) num pkts bytes target prot opt
+in out source destination Chain DOCKER-ISOLATION (1 references) num pkts
+bytes target prot opt in out source destination 1 0 0 RETURN all – * *
+0.0.0.0/0 0.0.0.0/0 规则添加</p>
+<p>iptables -A
+添加的规则是添加在最后面。如针对INPUT链增加一条规则，接收从eth0口进入且源地址为192.168.0.0/16网段发往本机的数据。</p>
+<p>iptables -A INPUT -i eth0 -s 172.19.0.0/16 -j ACCEPT iptables -I
+添加的规则默认添加至第一条。 iptables -I INPUT -i eth0 -s 172.19.0.0/16
+-j ACCEPT # 在表ACCEPT中插入第一条数据 iptables -I INPUT -i eth0 -s
+172.20.22.0/24 -j ACCEPT # 在表ACCEPT中插入第一条数据 iptables -I INPUT
+-i eth0 -s 172.20.24.0/24 -j ACCEPT # 在表ACCEPT中插入第一条数据
+删除规则 iptables -t filter -D INPUT 7 # 删除INPUT表中的第7条数据
+iptables -t filter -D OUTPUT 1 # 删除OUTPUT表中的第1条数据 service
+iptables save 规则数据保存在文件中 /etc/sysconfig/iptables service
+iptables save # 将文件保存在/etc/sysconfig/iptables 恢复iptables rules
+iptables-restore &lt;/dd/iptables.bak</p>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h4>上一个主题</h4>
+  <p class="topless"><a href="技术002KNToolsIperf.html"
+                        title="上一章">技术002KNToolsIperf</a></p>
+  <h4>下一个主题</h4>
+  <p class="topless"><a href="技术002KNToolsTCPDUMP.html"
+                        title="下一章">技术002KNToolsTCPDUMP</a></p>
+  <div role="note" aria-label="source link">
+    <h3>本页</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/我的笔记/技术002KNToolsIptables.rst.txt"
+            rel="nofollow">显示源代码</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">快速搜索</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="转向" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>导航</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="总目录"
+             >索引</a></li>
+        <li class="right" >
+          <a href="技术002KNToolsTCPDUMP.html" title="技术002KNToolsTCPDUMP"
+             >下一页</a> |</li>
+        <li class="right" >
+          <a href="技术002KNToolsIperf.html" title="技术002KNToolsIperf"
+             >上一页</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">mrmote&#39;s kubernetes note 1.0 文档</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; 版权所有 2019, mrmote.
+      由 <a href="http://sphinx-doc.org/">Sphinx</a> 2.2.1 创建。
+    </div>
+  </body>
+</html>

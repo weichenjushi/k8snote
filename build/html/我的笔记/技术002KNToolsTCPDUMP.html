@@ -1,0 +1,287 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml" lang="zh_CN">
+  <head>
+    <meta charset="utf-8" />
+    <title>技术002KNToolsTCPDUMP &#8212; mrmote&#39;s kubernetes note 1.0 文档</title>
+    <link rel="stylesheet" href="../_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/language_data.js"></script>
+    <script type="text/javascript" src="../_static/translations.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <link rel="index" title="索引" href="../genindex.html" />
+    <link rel="search" title="搜索" href="../search.html" />
+    <link rel="next" title="技术002KNetwork" href="技术002KNetwork.html" />
+    <link rel="prev" title="技术002KNToolsIptables" href="技术002KNToolsIptables.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>导航</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="总目录"
+             accesskey="I">索引</a></li>
+        <li class="right" >
+          <a href="技术002KNetwork.html" title="技术002KNetwork"
+             accesskey="N">下一页</a> |</li>
+        <li class="right" >
+          <a href="技术002KNToolsIptables.html" title="技术002KNToolsIptables"
+             accesskey="P">上一页</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">mrmote&#39;s kubernetes note 1.0 文档</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <p>技术002KNToolsTCPDUMP</p>
+<div class="section" id="kntoolstcpdump">
+<h1>技术002KNToolsTCPDUMP<a class="headerlink" href="#kntoolstcpdump" title="永久链接至标题">¶</a></h1>
+<p>tcpdump
+<a class="reference external" href="http://bencane.com/2014/10/13/quick-and-practical-reference-for-tcpdump/">http://bencane.com/2014/10/13/quick-and-practical-reference-for-tcpdump/</a>
+A Quick and Practical Reference for tcpdump tcpdump -n 不带hostname
+tcpdump -vvv -vvv显示更多的ip packets信息 tcpdump -vvvv -c 1
+-c显示的行数 tcpdump -i eth0 -i 指定监控的网卡信息，默认是取eth0，
+tcpdump -i any any是监控服务器上的所有的网卡 tcpdump -w /path/to/file
+-w保存到文件中 tcpdump -r /path/to/file -r从文件中读取 tcpdump -s 100
+-s指定packet的长度，默认是65535 bytes filter tcpdump -nvvv -i any -c 3
+host 10.0.3.1 过滤host=10.0.3.1的流量 tcpdump -nvvv -i any -c 3 src host
+10.0.3.1 只显示source host的流量</p>
+<p>tcpdump -nvvv -i any -c 3 port 22 and port 60738
+比较有用，只抓取port22和60738之间的流量，或者tcpdump -nvvv -i any -c 3
+‘port 22 &amp;&amp; port 60738’</p>
+<p>tcpdump -nvvv -i any -c 20 ‘port 80 or port 443’ 或 tcpdump -nvvv -i any
+-c 20 ‘port 80 or port 443’</p>
+<p>tcpdump -nvvv -i any -c 20 ‘(port 80 or port 443) and host 10.0.3.169’</p>
+<p>tcpdump -nvvv -i any -c 20 ‘((port 80 or port 443) and (host 10.0.3.169
+or host 10.0.3.1)) and dst host 10.0.3.246’ 通过括号来实现运算的优先级别</p>
+<p>抓取其他协议ICMP, UDP, and ARP 的包 观察 1.srcip和port dstip和port</p>
+<p>10.0.3.246.56894 &gt; 192.168.0.92.22: Flags [S], cksum 0xcf28 (incorrect
+-&gt; 0x0388), seq 682725222, win 29200, options [mss 1460,sackOK,TS val
+619989005 ecr 0,nop,wscale 7], length 0</p>
+<p>Given the above output we can see that the source ip is 10.0.3.246 the
+source port is 56894 and the destination ip is 192.168.0.92 with a
+destination port of 22. This is pretty easy to identify once you
+understand the format of tcpdump. If you haven’t guessed the format yet
+you can break it down as follows src-ip.src-port &gt; dest-ip.dest-port:
+Flags[S] the source is in front of the &gt; and the destination is behind.
+You can think of the &gt; as an arrow pointing to the destination.</p>
+<p>2.packet的类型 以及packet观察</p>
+<p>10.0.3.246.56894 &gt; 192.168.0.92.22: Flags [S], cksum 0xcf28 (incorrect
+-&gt; 0x0388), seq 682725222, win 29200, options [mss 1460,sackOK,TS val
+619989005 ecr 0,nop,wscale 7], length 0</p>
+<p>From the sample above we can tell that the packet is a single SYN
+packet. We can identify this by the Flags [S] section of the tcpdump
+output, different types of packets have different types of flags.
+Without going too deep into what types of packets exist within TCP you
+can use the below as a cheat sheet for identifying packet types.</p>
+<p>[S] - SYN (Start Connection) [.] - No Flag Set [P] - PSH (Push Data) [F]
+- FIN (Finish Connection) [R] - RST (Reset Connection)</p>
+<p>Depending on the version and output of tcpdump you may also see flags
+such as [S.] this is used to indicate a SYN-ACK packet.</p>
+<p>An unhealthy example</p>
+<p>15:15:43.323412 IP (tos 0x0, ttl 64, id 51051, offset 0, flags [DF],
+proto TCP (6), length 60)</p>
+<p>10.0.3.246.56894 &gt; 192.168.0.92.22: Flags [S], cksum 0xcf28 (incorrect
+-&gt; 0x0388), seq 682725222, win 29200, options [mss 1460,sackOK,TS val
+619989005 ecr 0,nop,wscale 7], length 0</p>
+<p>15:15:44.321444 IP (tos 0x0, ttl 64, id 51052, offset 0, flags [DF],
+proto TCP (6), length 60)</p>
+<p>10.0.3.246.56894 &gt; 192.168.0.92.22: Flags [S], cksum 0xcf28 (incorrect
+-&gt; 0x028e), seq 682725222, win 29200, options [mss 1460,sackOK,TS val
+619989255 ecr 0,nop,wscale 7], length 0</p>
+<p>15:15:46.321610 IP (tos 0x0, ttl 64, id 51053, offset 0, flags [DF],
+proto TCP (6), length 60)</p>
+<p>10.0.3.246.56894 &gt; 192.168.0.92.22: Flags [S], cksum 0xcf28 (incorrect
+-&gt; 0x009a), seq 682725</p>
+<p>The above sampling shows an example of an unhealthy exchange, and by
+unhealthy exchange for this example that means no exchange. In the above
+sample we can see that 10.0.3.246 is sending a SYN packet to host
+192.168.0.92 however we never see a response from host 192.168.0.92.</p>
+<p>A healthy example</p>
+<p>15:18:25.716453 IP (tos 0x10, ttl 64, id 53344, offset 0, flags [DF],
+proto TCP (6), length 60)</p>
+<p>10.0.3.246.34908 &gt; 192.168.0.110.22: Flags [S], cksum 0xcf3a (incorrect
+-&gt; 0xc838), seq 1943877315, win 29200, options [mss 1460,sackOK,TS val
+620029603 ecr 0,nop,wscale 7], length 0</p>
+<p>15:18:25.716777 IP (tos 0x0, ttl 63, id 0, offset 0, flags [DF], proto
+TCP (6), length 60)</p>
+<p>192.168.0.110.22 &gt; 10.0.3.246.34908: Flags [S.], cksum 0x594a (correct),
+seq 4001145915, ack 1943877316, win 5792, options [mss 1460,sackOK,TS
+val 18495104 ecr 620029603,nop,wscale 2], length 0</p>
+<p>15:18:25.716899 IP (tos 0x10, ttl 64, id 53345, offset 0, flags [DF],
+proto TCP (6), length 52)</p>
+<p>10.0.3.246.34908 &gt; 192.168.0.110.22: Flags [.], cksum 0xcf32 (incorrect
+-&gt; 0x9dcc), ack 1, win 229, options [nop,nop,TS val 620029603 ecr
+18495104], length 0</p>
+<p>A healthy example would look like the above, in the above we can see a
+standard TCP 3-way handshake. The first packet above is a SYN packet
+from host 10.0.3.246 to host 192.168.0.110, the second packet is a
+SYN-ACK from host 192.168.0.110 acknowledging the SYN. The final packet
+is a ACK or rather a SYN-ACK-ACK from host 10.0.3.246 acknowledging that
+it has received the SYN-ACK. From this point on there is an established
+TCP/IP connection.</p>
+<p>3.用Hex和ASCII 查看数据包</p>
+<p>tcpdump -nvvv -i any -c 1 -XX ‘port 80 and host 10.0.3.1’ -XX flag to
+print the packet data in hex and ascii</p>
+<p>tcpdump -nvvv -i any -c 1 -A ‘port 80 and host 10.0.3.1’ -A Printing
+packet data in ASCII only</p>
+<p>通过这种人可读取的格式方便排查问题，如果对于加密的数据，
+可以通过ssldump和wireshark。However, if you use have the certificates in
+use you could use commands such as ssldump or even wireshark.</p>
+<p>tcpdump
+<a class="reference external" href="http://bencane.com/2014/10/13/quick-and-practical-reference-for-tcpdump/">http://bencane.com/2014/10/13/quick-and-practical-reference-for-tcpdump/</a>
+A Quick and Practical Reference for tcpdump tcpdump -n 不带hostname
+tcpdump -vvv -vvv显示更多的ip packets信息 tcpdump -vvvv -c 1
+-c显示的行数 tcpdump -i eth0 -i 指定监控的网卡信息，默认是取eth0，
+tcpdump -i any any是监控服务器上的所有的网卡 tcpdump -w /path/to/file
+-w保存到文件中 tcpdump -r /path/to/file -r从文件中读取 tcpdump -s 100
+-s指定packet的长度，默认是65535 bytes filter tcpdump -nvvv -i any -c 3
+host 10.0.3.1 过滤host=10.0.3.1的流量 tcpdump -nvvv -i any -c 3 src host
+10.0.3.1 只显示source host的流量</p>
+<p>tcpdump -nvvv -i any -c 3 port 22 and port 60738
+比较有用，只抓取port22和60738之间的流量，或者tcpdump -nvvv -i any -c 3
+‘port 22 &amp;&amp; port 60738’</p>
+<p>tcpdump -nvvv -i any -c 20 ‘port 80 or port 443’ 或 tcpdump -nvvv -i any
+-c 20 ‘port 80 or port 443’</p>
+<p>tcpdump -nvvv -i any -c 20 ‘(port 80 or port 443) and host 10.0.3.169’</p>
+<p>tcpdump -nvvv -i any -c 20 ‘((port 80 or port 443) and (host 10.0.3.169
+or host 10.0.3.1)) and dst host 10.0.3.246’ 通过括号来实现运算的优先级别</p>
+<p>抓取其他协议ICMP, UDP, and ARP 的包 观察 1.srcip和port dstip和port</p>
+<p>10.0.3.246.56894 &gt; 192.168.0.92.22: Flags [S], cksum 0xcf28 (incorrect
+-&gt; 0x0388), seq 682725222, win 29200, options [mss 1460,sackOK,TS val
+619989005 ecr 0,nop,wscale 7], length 0</p>
+<p>Given the above output we can see that the source ip is 10.0.3.246 the
+source port is 56894 and the destination ip is 192.168.0.92 with a
+destination port of 22. This is pretty easy to identify once you
+understand the format of tcpdump. If you haven’t guessed the format yet
+you can break it down as follows src-ip.src-port &gt; dest-ip.dest-port:
+Flags[S] the source is in front of the &gt; and the destination is behind.
+You can think of the &gt; as an arrow pointing to the destination.</p>
+<p>2.packet的类型 以及packet观察</p>
+<p>10.0.3.246.56894 &gt; 192.168.0.92.22: Flags [S], cksum 0xcf28 (incorrect
+-&gt; 0x0388), seq 682725222, win 29200, options [mss 1460,sackOK,TS val
+619989005 ecr 0,nop,wscale 7], length 0</p>
+<p>From the sample above we can tell that the packet is a single SYN
+packet. We can identify this by the Flags [S] section of the tcpdump
+output, different types of packets have different types of flags.
+Without going too deep into what types of packets exist within TCP you
+can use the below as a cheat sheet for identifying packet types.</p>
+<p>[S] - SYN (Start Connection) [.] - No Flag Set [P] - PSH (Push Data) [F]
+- FIN (Finish Connection) [R] - RST (Reset Connection)</p>
+<p>Depending on the version and output of tcpdump you may also see flags
+such as [S.] this is used to indicate a SYN-ACK packet.</p>
+<p>An unhealthy example</p>
+<p>15:15:43.323412 IP (tos 0x0, ttl 64, id 51051, offset 0, flags [DF],
+proto TCP (6), length 60)</p>
+<p>10.0.3.246.56894 &gt; 192.168.0.92.22: Flags [S], cksum 0xcf28 (incorrect
+-&gt; 0x0388), seq 682725222, win 29200, options [mss 1460,sackOK,TS val
+619989005 ecr 0,nop,wscale 7], length 0</p>
+<p>15:15:44.321444 IP (tos 0x0, ttl 64, id 51052, offset 0, flags [DF],
+proto TCP (6), length 60)</p>
+<p>10.0.3.246.56894 &gt; 192.168.0.92.22: Flags [S], cksum 0xcf28 (incorrect
+-&gt; 0x028e), seq 682725222, win 29200, options [mss 1460,sackOK,TS val
+619989255 ecr 0,nop,wscale 7], length 0</p>
+<p>15:15:46.321610 IP (tos 0x0, ttl 64, id 51053, offset 0, flags [DF],
+proto TCP (6), length 60)</p>
+<p>10.0.3.246.56894 &gt; 192.168.0.92.22: Flags [S], cksum 0xcf28 (incorrect
+-&gt; 0x009a), seq 682725</p>
+<p>The above sampling shows an example of an unhealthy exchange, and by
+unhealthy exchange for this example that means no exchange. In the above
+sample we can see that 10.0.3.246 is sending a SYN packet to host
+192.168.0.92 however we never see a response from host 192.168.0.92.</p>
+<p>A healthy example</p>
+<p>15:18:25.716453 IP (tos 0x10, ttl 64, id 53344, offset 0, flags [DF],
+proto TCP (6), length 60)</p>
+<p>10.0.3.246.34908 &gt; 192.168.0.110.22: Flags [S], cksum 0xcf3a (incorrect
+-&gt; 0xc838), seq 1943877315, win 29200, options [mss 1460,sackOK,TS val
+620029603 ecr 0,nop,wscale 7], length 0</p>
+<p>15:18:25.716777 IP (tos 0x0, ttl 63, id 0, offset 0, flags [DF], proto
+TCP (6), length 60)</p>
+<p>192.168.0.110.22 &gt; 10.0.3.246.34908: Flags [S.], cksum 0x594a (correct),
+seq 4001145915, ack 1943877316, win 5792, options [mss 1460,sackOK,TS
+val 18495104 ecr 620029603,nop,wscale 2], length 0</p>
+<p>15:18:25.716899 IP (tos 0x10, ttl 64, id 53345, offset 0, flags [DF],
+proto TCP (6), length 52)</p>
+<p>10.0.3.246.34908 &gt; 192.168.0.110.22: Flags [.], cksum 0xcf32 (incorrect
+-&gt; 0x9dcc), ack 1, win 229, options [nop,nop,TS val 620029603 ecr
+18495104], length 0</p>
+<p>A healthy example would look like the above, in the above we can see a
+standard TCP 3-way handshake. The first packet above is a SYN packet
+from host 10.0.3.246 to host 192.168.0.110, the second packet is a
+SYN-ACK from host 192.168.0.110 acknowledging the SYN. The final packet
+is a ACK or rather a SYN-ACK-ACK from host 10.0.3.246 acknowledging that
+it has received the SYN-ACK. From this point on there is an established
+TCP/IP connection.</p>
+<p>3.用Hex和ASCII 查看数据包</p>
+<p>tcpdump -nvvv -i any -c 1 -XX ‘port 80 and host 10.0.3.1’ -XX flag to
+print the packet data in hex and ascii</p>
+<p>tcpdump -nvvv -i any -c 1 -A ‘port 80 and host 10.0.3.1’ -A Printing
+packet data in ASCII only</p>
+<p>通过这种人可读取的格式方便排查问题，如果对于加密的数据，
+可以通过ssldump和wireshark。However, if you use have the certificates in
+use you could use commands such as ssldump or even wireshark.</p>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h4>上一个主题</h4>
+  <p class="topless"><a href="技术002KNToolsIptables.html"
+                        title="上一章">技术002KNToolsIptables</a></p>
+  <h4>下一个主题</h4>
+  <p class="topless"><a href="技术002KNetwork.html"
+                        title="下一章">技术002KNetwork</a></p>
+  <div role="note" aria-label="source link">
+    <h3>本页</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/我的笔记/技术002KNToolsTCPDUMP.rst.txt"
+            rel="nofollow">显示源代码</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">快速搜索</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="转向" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>导航</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="总目录"
+             >索引</a></li>
+        <li class="right" >
+          <a href="技术002KNetwork.html" title="技术002KNetwork"
+             >下一页</a> |</li>
+        <li class="right" >
+          <a href="技术002KNToolsIptables.html" title="技术002KNToolsIptables"
+             >上一页</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">mrmote&#39;s kubernetes note 1.0 文档</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; 版权所有 2019, mrmote.
+      由 <a href="http://sphinx-doc.org/">Sphinx</a> 2.2.1 创建。
+    </div>
+  </body>
+</html>

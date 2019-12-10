@@ -1,0 +1,214 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml" lang="zh_CN">
+  <head>
+    <meta charset="utf-8" />
+    <title>技术002CRunc &#8212; mrmote&#39;s kubernetes note 1.0 文档</title>
+    <link rel="stylesheet" href="../_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/language_data.js"></script>
+    <script type="text/javascript" src="../_static/translations.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <link rel="index" title="索引" href="../genindex.html" />
+    <link rel="search" title="搜索" href="../search.html" />
+    <link rel="next" title="技术002CRuntimeSpec" href="技术002CRuntimeSpec.html" />
+    <link rel="prev" title="技术002COCI" href="技术002COCI.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>导航</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="总目录"
+             accesskey="I">索引</a></li>
+        <li class="right" >
+          <a href="技术002CRuntimeSpec.html" title="技术002CRuntimeSpec"
+             accesskey="N">下一页</a> |</li>
+        <li class="right" >
+          <a href="技术002COCI.html" title="技术002COCI"
+             accesskey="P">上一页</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">mrmote&#39;s kubernetes note 1.0 文档</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <p>技术002CRunc</p>
+<div class="section" id="crunc">
+<h1>技术002CRunc<a class="headerlink" href="#crunc" title="永久链接至标题">¶</a></h1>
+<ul class="simple">
+<li><p><a href="#id1"><span class="problematic" id="id2">`技术002CRunc &lt;&gt;`__</span></a></p>
+<ul>
+<li><p><a href="#id1"><span class="problematic" id="id3">`Creating an OCI Bundle &lt;&gt;`__</span></a></p></li>
+<li><p><a href="#id1"><span class="problematic" id="id4">`Running Containers &lt;&gt;`__</span></a></p></li>
+<li><p><a href="#id1"><span class="problematic" id="id5">`通过Supervisor运行runc &lt;&gt;`__</span></a></p></li>
+</ul>
+</li>
+</ul>
+<div class="section" id="creating-an-oci-bundle">
+<h2>Creating an OCI Bundle<a class="headerlink" href="#creating-an-oci-bundle" title="永久链接至标题">¶</a></h2>
+<ul class="simple">
+<li><p>create the top most bundle directory</p></li>
+</ul>
+<p><code class="docutils literal notranslate"><span class="pre">mkdir</span> <span class="pre">/mycontainer</span> <span class="pre">cd</span> <span class="pre">/mycontainer</span></code></p>
+<ul class="simple">
+<li><p>create the rootfs directory</p></li>
+</ul>
+<p><code class="docutils literal notranslate"><span class="pre">mkdir</span> <span class="pre">rootfs</span></code></p>
+<ul class="simple">
+<li><p>export busybox via Docker into the rootfs directory</p></li>
+</ul>
+<p><code class="docutils literal notranslate"><span class="pre">docker</span> <span class="pre">export</span> <span class="pre">$(docker</span> <span class="pre">create</span> <span class="pre">busybox)</span> <span class="pre">|</span> <span class="pre">tar</span> <span class="pre">-C</span> <span class="pre">rootfs</span> <span class="pre">-xvf</span> <span class="pre">-</span></code>
+命令<code class="docutils literal notranslate"><span class="pre">runc</span> <span class="pre">spec</span></code>会生成基本的模版文件config.json</p>
+</div>
+<div class="section" id="running-containers">
+<h2>Running Containers<a class="headerlink" href="#running-containers" title="永久链接至标题">¶</a></h2>
+<ol class="arabic simple">
+<li><p>以root用户运行</p></li>
+</ol>
+<ul class="simple">
+<li><p>run as root</p></li>
+</ul>
+<p><code class="docutils literal notranslate"><span class="pre">cd</span> <span class="pre">/mycontainer</span> <span class="pre">runc</span> <span class="pre">run</span> <span class="pre">mycontainerid</span></code></p>
+<p>If you used the unmodified runc spec template this should give you a sh
+session inside the container.</p>
+<p>The second way to start a container is using the specs lifecycle
+operations. This gives you more power over how the container is created
+and managed while it is running. This will also launch the container in
+the background so you will have to edit the config.json to remove the
+terminal setting for the simple examples here. Your process field in the
+config.json should look like this below with “terminal”: false and
+`“args”: [“sleep”, “5”].</p>
+<p>“process”: { “terminal”: false, “user”: { “uid”: 0, “gid”: 0 }, “args”:
+[ “sleep”, “5”], “env”: [
+“PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin”,
+“TERM=xterm”], “cwd”: “/”, “capabilities”: { “bounding”: [
+“CAP_AUDIT_WRITE”, “CAP_KILL”, “CAP_NET_BIND_SERVICE”], “effective”: [
+“CAP_AUDIT_WRITE”, “CAP_KILL”, “CAP_NET_BIND_SERVICE”], “inheritable”: [
+“CAP_AUDIT_WRITE”, “CAP_KILL”, “CAP_NET_BIND_SERVICE”], “permitted”: [
+“CAP_AUDIT_WRITE”, “CAP_KILL”, “CAP_NET_BIND_SERVICE”], “ambient”: [
+“CAP_AUDIT_WRITE”, “CAP_KILL”, “CAP_NET_BIND_SERVICE”] }, “rlimits”: [ {
+“type”: “RLIMIT_NOFILE”, “hard”: 1024, “soft”: 1024 }],
+“noNewPrivileges”: true },`</p>
+<ul class="simple">
+<li><p>run as root</p></li>
+</ul>
+<p>cd /mycontainer runc create mycontainerid</p>
+<ul class="simple">
+<li><p>view the container is created and in the “created” state</p></li>
+</ul>
+<p>runc list</p>
+<ul class="simple">
+<li><p>start the process inside the container</p></li>
+</ul>
+<p>runc start mycontainerid</p>
+<ul class="simple">
+<li><p>after 5 seconds view that the container has exited and is now in the
+stopped state</p></li>
+</ul>
+<p>runc list</p>
+<ul class="simple">
+<li><p>now delete the container</p></li>
+</ul>
+<p>runc delete mycontainerid 1. 以普通用户运行</p>
+<ul>
+<li><p>Same as the first example</p>
+<p>mkdir ~/mycontainer cd ~/mycontainer mkdir rootfs docker export
+$(docker create busybox) | tar -C rootfs -xvf -</p>
+</li>
+<li><p>The –rootless parameter instructs runc spec to generate a
+configuration for a rootless container, which will allow you to run
+the container as a non-root user.</p></li>
+</ul>
+<p><code class="docutils literal notranslate"><span class="pre">runc</span> <span class="pre">spec</span> <span class="pre">--rootless</span></code></p>
+<ul class="simple">
+<li><p>The –root parameter tells runc where to store the container state. It
+must be writable by the user.</p></li>
+</ul>
+<p><code class="docutils literal notranslate"><span class="pre">runc</span> <span class="pre">--root</span> <span class="pre">/tmp/runc</span> <span class="pre">run</span> <span class="pre">mycontainerid</span></code></p>
+</div>
+<div class="section" id="supervisorrunc">
+<h2>通过Supervisor运行runc<a class="headerlink" href="#supervisorrunc" title="永久链接至标题">¶</a></h2>
+<p>Supervisors `[Unit] Description=Start My Container [Service]
+Type=forking</p>
+<p>ExecStart=/usr/local/sbin/runc run -d –pid-file /run/mycontainerid.pid
+mycontainerid</p>
+<p>ExecStopPost=/usr/local/sbin/runc delete mycontainerid
+WorkingDirectory=/mycontainer PIDFile=/run/mycontainerid.pid [Install]
+WantedBy=multi-user.target`</p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../index.html">目录</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">技术002CRunc</a><ul>
+<li><a class="reference internal" href="#creating-an-oci-bundle">Creating an OCI Bundle</a></li>
+<li><a class="reference internal" href="#running-containers">Running Containers</a></li>
+<li><a class="reference internal" href="#supervisorrunc">通过Supervisor运行runc</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>上一个主题</h4>
+  <p class="topless"><a href="技术002COCI.html"
+                        title="上一章">技术002COCI</a></p>
+  <h4>下一个主题</h4>
+  <p class="topless"><a href="技术002CRuntimeSpec.html"
+                        title="下一章">技术002CRuntimeSpec</a></p>
+  <div role="note" aria-label="source link">
+    <h3>本页</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/我的笔记/技术002CRunc.rst.txt"
+            rel="nofollow">显示源代码</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">快速搜索</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="转向" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>导航</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="总目录"
+             >索引</a></li>
+        <li class="right" >
+          <a href="技术002CRuntimeSpec.html" title="技术002CRuntimeSpec"
+             >下一页</a> |</li>
+        <li class="right" >
+          <a href="技术002COCI.html" title="技术002COCI"
+             >上一页</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">mrmote&#39;s kubernetes note 1.0 文档</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; 版权所有 2019, mrmote.
+      由 <a href="http://sphinx-doc.org/">Sphinx</a> 2.2.1 创建。
+    </div>
+  </body>
+</html>

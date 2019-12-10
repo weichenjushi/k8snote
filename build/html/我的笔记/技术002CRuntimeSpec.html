@@ -1,0 +1,104 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml" lang="zh_CN">
+  <head>
+    <meta charset="utf-8" />
+    <title>技术002CRuntimeSpec &#8212; mrmote&#39;s kubernetes note 1.0 文档</title>
+    <link rel="stylesheet" href="../_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/language_data.js"></script>
+    <script type="text/javascript" src="../_static/translations.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <link rel="index" title="索引" href="../genindex.html" />
+    <link rel="search" title="搜索" href="../search.html" />
+    <link rel="next" title="技术002KCNCF" href="技术002KCNCF.html" />
+    <link rel="prev" title="技术002CRunc" href="技术002CRunc.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>导航</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="总目录"
+             accesskey="I">索引</a></li>
+        <li class="right" >
+          <a href="技术002KCNCF.html" title="技术002KCNCF"
+             accesskey="N">下一页</a> |</li>
+        <li class="right" >
+          <a href="技术002CRunc.html" title="技术002CRunc"
+             accesskey="P">上一页</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">mrmote&#39;s kubernetes note 1.0 文档</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <p>技术002CRuntimeSpec</p>
+<div class="section" id="cruntimespec">
+<h1>技术002CRuntimeSpec<a class="headerlink" href="#cruntimespec" title="永久链接至标题">¶</a></h1>
+<p>%23%20%E6%8A%80%E6%9C%AF002CRuntimeSpec%0A%0AOCI%E5%88%B6%E5%AE%9A%E4%BA%86%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%92%8C%E5%BA%94%E7%94%A8%E5%AE%B9%E5%99%A8%E4%B9%8B%E9%97%B4%E4%BA%A4%E4%BA%92%E7%9A%84%E8%A7%84%E8%8C%83%E3%80%82%0A%E8%AF%A5%E6%96%87%E6%A1%A3%E4%B8%BB%E8%A6%81%E6%A6%82%E8%BF%B0%E9%85%8D%E7%BD%AE%E3%80%81%E5%8F%AF%E6%89%A7%E8%A1%8C%E7%8E%AF%E5%A2%83%E5%92%8C%E5%AE%B9%E5%99%A8%E7%9A%84%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F%E3%80%82%0A<em>%20%E9%85%8D%E7%BD%AE%E5%AD%98%E6%94%BE%E5%9C%A8%E6%96%87%E4%BB%B6config.json%E4%B8%AD%EF%BC%8C%E8%AF%A5%E6%96%87%E4%BB%B6%E4%B8%AD%E5%8C%85%E5%90%AB%E5%AE%B9%E5%99%A8%E6%94%AF%E6%8C%81%E7%9A%84%E5%B9%B3%E5%8F%B0%E5%92%8C%E5%88%9B%E5%BB%BA%E5%AE%B9%E5%99%A8%E6%89%80%E9%9C%80%E5%AD%97%E6%AE%B5%E7%9A%84%E8%AF%A6%E7%BB%86%E4%BF%A1%E6%81%AF%E3%80%82%0A</em>%20%E5%8F%AF%E6%89%A7%E8%A1%8C%E7%8E%AF%E5%A2%83%E3%80%82%E5%8F%AF%E6%89%A7%E8%A1%8C%E7%8E%AF%E5%A2%83%E7%A1%AE%E4%BF%9D%E5%AE%B9%E5%99%A8%E4%B8%AD%E7%9A%84%E5%BA%94%E7%94%A8%E6%9C%89%E4%B8%80%E8%87%B4%E6%80%A7%E7%8E%AF%E5%A2%83%E5%9C%A8%E5%AE%B9%E5%99%A8%E7%9A%84%E6%95%B4%E4%B8%AA%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F%E4%B8%AD%E3%80%82%0APlatforms%0A%E5%90%84%E5%B9%B3%E5%8F%B0%E7%9A%84%E8%A7%84%E8%8C%83%E5%A6%82%E4%B8%8B%0APlatforms%20defined%20by%20this%20specification%20are%3A%0A<em>%20linux%3A%20runtime.md%2C%20config.md%2C%20config-linux.md%2C%20and%20runtime-linux.md.%0A</em>%20solaris%3A%20runtime.md%2C%20config.md%2C%20and%20config-solaris.md.%0A<em>%20windows%3A%20runtime.md%2C%20config.md%2C%20and%20config-windows.md.%0A</em>%20vm%3A%20runtime.md%2C%20config.md%2C%20and%20config-vm.md.%0ARuntime.md%0A%0A</p>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h4>上一个主题</h4>
+  <p class="topless"><a href="技术002CRunc.html"
+                        title="上一章">技术002CRunc</a></p>
+  <h4>下一个主题</h4>
+  <p class="topless"><a href="技术002KCNCF.html"
+                        title="下一章">技术002KCNCF</a></p>
+  <div role="note" aria-label="source link">
+    <h3>本页</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/我的笔记/技术002CRuntimeSpec.rst.txt"
+            rel="nofollow">显示源代码</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">快速搜索</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="转向" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>导航</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="总目录"
+             >索引</a></li>
+        <li class="right" >
+          <a href="技术002KCNCF.html" title="技术002KCNCF"
+             >下一页</a> |</li>
+        <li class="right" >
+          <a href="技术002CRunc.html" title="技术002CRunc"
+             >上一页</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">mrmote&#39;s kubernetes note 1.0 文档</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; 版权所有 2019, mrmote.
+      由 <a href="http://sphinx-doc.org/">Sphinx</a> 2.2.1 创建。
+    </div>
+  </body>
+</html>

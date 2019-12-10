@@ -1,0 +1,173 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml" lang="zh_CN">
+  <head>
+    <meta charset="utf-8" />
+    <title>技术002KOthers &#8212; mrmote&#39;s kubernetes note 1.0 文档</title>
+    <link rel="stylesheet" href="../_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/language_data.js"></script>
+    <script type="text/javascript" src="../_static/translations.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <link rel="index" title="索引" href="../genindex.html" />
+    <link rel="search" title="搜索" href="../search.html" />
+    <link rel="next" title="技术002KPod" href="技术002KPod.html" />
+    <link rel="prev" title="技术002KOperator" href="技术002KOperator.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>导航</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="总目录"
+             accesskey="I">索引</a></li>
+        <li class="right" >
+          <a href="技术002KPod.html" title="技术002KPod"
+             accesskey="N">下一页</a> |</li>
+        <li class="right" >
+          <a href="技术002KOperator.html" title="技术002KOperator"
+             accesskey="P">上一页</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">mrmote&#39;s kubernetes note 1.0 文档</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <p>技术002KOthers</p>
+<div class="section" id="kothers">
+<h1>技术002KOthers<a class="headerlink" href="#kothers" title="永久链接至标题">¶</a></h1>
+<ul class="simple">
+<li><p><a href="#id1"><span class="problematic" id="id2">`技术002KOthers &lt;&gt;`__</span></a></p>
+<ul>
+<li><p><a href="#id1"><span class="problematic" id="id3">`Docker hub &lt;&gt;`__</span></a></p></li>
+<li><p><a href="#id1"><span class="problematic" id="id4">`gcr.io k8s.gcr.io quay.io镜像拉取 &lt;&gt;`__</span></a></p></li>
+<li><p><a href="#id1"><span class="problematic" id="id5">`CLI 瑞士军刀 &lt;&gt;`__</span></a></p></li>
+<li><p><a href="#id1"><span class="problematic" id="id6">`为什么k8s是系统级别的保障 or k8s的设计理念 &lt;&gt;`__</span></a></p></li>
+</ul>
+</li>
+</ul>
+<div class="section" id="docker-hub">
+<h2>Docker hub<a class="headerlink" href="#docker-hub" title="永久链接至标题">¶</a></h2>
+<p>mirrorgooglecontainers <a class="reference external" href="https://hub.docker.com/u/mirrorgooglecontainers/">https://hub.docker.com/u/mirrorgooglecontainers/</a>
+anjia0532 <a class="reference external" href="https://hub.docker.com/u/anjia0532/">https://hub.docker.com/u/anjia0532/</a></p>
+</div>
+<div class="section" id="gcr-io-k8s-gcr-io-quay-io">
+<h2>gcr.io k8s.gcr.io quay.io镜像拉取<a class="headerlink" href="#gcr-io-k8s-gcr-io-quay-io" title="永久链接至标题">¶</a></h2>
+<p><a class="reference external" href="https://www.ilanni.com/?p=14534">镜像拉取</a> 1. docker官方仓库 docker
+pull xxx:yyy 中科大 docker pull
+docker.mirrors.ustc.edu.cn/library/xxx:yyy azure docker pull
+dockerhub.azk8s.cn/library/xxx:yyy 2. gcr.io镜像加速 docker pull
+gcr.io/xxx/yyy:zzz 中科大 docker pull
+gcr.mirrors.ustc.edu.cn/xxx/yyy:zzz azure docker pull docker pull
+gcr.azk8s.cn/xxx/yyy:zzz 3. k8s.gcr.io镜像加速 docker pull
+k8s.gcr.io/xxx:yyy &lt;=&gt; docker pull gcr.io/google-containers/xxx:yyy
+azure docker pull gcr.azk8s.cn/google-containers/xxx:yyy (中科大 docker
+pull gcr.mirrors.ustc.edu.cn/google-containers/xxx:yyy)
+4.quay.io镜像加速 docker pull quay.io/xxx/yyy:zzz 中科大 docker pull
+quay.mirrors.ustc.edu.cn/xxx/yyy:zzz Azure中国 docker pull
+quay.azk8s.cn/xxx/yyy:zzz</p>
+</div>
+<div class="section" id="cli">
+<h2>CLI 瑞士军刀<a class="headerlink" href="#cli" title="永久链接至标题">¶</a></h2>
+<p>k9s kubectx kubens kube-ps1 popeye stern kubectl-bindrole帮助查找
+Kubernetes 集群中指定 SA/Group/User 的权限等信息。</p>
+</div>
+<div class="section" id="k8s-or-k8s">
+<h2>为什么k8s是系统级别的保障 or k8s的设计理念<a class="headerlink" href="#k8s-or-k8s" title="永久链接至标题">¶</a></h2>
+<p><a class="reference external" href="https://hackernoon.com/level-triggering-and-reconciliation-in-kubernetes-1f17fe30333d">https://hackernoon.com/level-triggering-and-reconciliation-in-kubernetes-1f17fe30333d</a></p>
+<p>Kubernetes being self-healing</p>
+<ul class="simple">
+<li><p>两个信号</p></li>
+</ul>
+<p>k8s通过观察2个信号，一个是desired state(理想)状态一个是actual
+state(实际状态)</p>
+<ul class="simple">
+<li><p>安全</p></li>
+</ul>
+<p>与传统的YARN相比较，安全性更高</p>
+<ul class="simple">
+<li><p>集群规模</p></li>
+</ul>
+<p>到 1.9 版本就已可以稳定支持 5000 个节点、15 万个 Pod 和 30
+万个容器的规模，覆盖绝大部分用户场景，从此彻底消除业界对 Kubernetes
+规模的顾虑。</p>
+<ul class="simple">
+<li><p>自愈/自我调度/自动更新、回滚/水平扩展和负载均衡</p></li>
+</ul>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../index.html">目录</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">技术002KOthers</a><ul>
+<li><a class="reference internal" href="#docker-hub">Docker hub</a></li>
+<li><a class="reference internal" href="#gcr-io-k8s-gcr-io-quay-io">gcr.io k8s.gcr.io quay.io镜像拉取</a></li>
+<li><a class="reference internal" href="#cli">CLI 瑞士军刀</a></li>
+<li><a class="reference internal" href="#k8s-or-k8s">为什么k8s是系统级别的保障 or k8s的设计理念</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>上一个主题</h4>
+  <p class="topless"><a href="技术002KOperator.html"
+                        title="上一章">技术002KOperator</a></p>
+  <h4>下一个主题</h4>
+  <p class="topless"><a href="技术002KPod.html"
+                        title="下一章">技术002KPod</a></p>
+  <div role="note" aria-label="source link">
+    <h3>本页</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/我的笔记/技术002KOthers.rst.txt"
+            rel="nofollow">显示源代码</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">快速搜索</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="转向" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>导航</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="总目录"
+             >索引</a></li>
+        <li class="right" >
+          <a href="技术002KPod.html" title="技术002KPod"
+             >下一页</a> |</li>
+        <li class="right" >
+          <a href="技术002KOperator.html" title="技术002KOperator"
+             >上一页</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">mrmote&#39;s kubernetes note 1.0 文档</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; 版权所有 2019, mrmote.
+      由 <a href="http://sphinx-doc.org/">Sphinx</a> 2.2.1 创建。
+    </div>
+  </body>
+</html>

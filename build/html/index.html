@@ -1,0 +1,263 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml" lang="zh_CN">
+  <head>
+    <meta charset="utf-8" />
+    <title>Welcome to mrmote’s kubernetes note’s documentation! &#8212; mrmote&#39;s kubernetes note 1.0 文档</title>
+    <link rel="stylesheet" href="_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/language_data.js"></script>
+    <script type="text/javascript" src="_static/translations.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <link rel="index" title="索引" href="genindex.html" />
+    <link rel="search" title="搜索" href="search.html" />
+    <link rel="next" title="&lt;no title&gt;" href="我的笔记/model.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>导航</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="总目录"
+             accesskey="I">索引</a></li>
+        <li class="right" >
+          <a href="我的笔记/model.html" title="&lt;no title&gt;"
+             accesskey="N">下一页</a> |</li>
+        <li class="nav-item nav-item-0"><a href="#">mrmote&#39;s kubernetes note 1.0 文档</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="welcome-to-mrmote-s-kubernetes-note-s-documentation">
+<h1>Welcome to mrmote’s kubernetes note’s documentation!<a class="headerlink" href="#welcome-to-mrmote-s-kubernetes-note-s-documentation" title="永久链接至标题">¶</a></h1>
+<div class="toctree-wrapper compound">
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="我的笔记/技术002CImageSpec.html">技术002CImageSpec</a></li>
+<li class="toctree-l1"><a class="reference internal" href="我的笔记/技术002COCI.html">技术002COCI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="我的笔记/技术002CRunc.html">技术002CRunc</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="我的笔记/技术002CRunc.html#creating-an-oci-bundle">Creating an OCI Bundle</a></li>
+<li class="toctree-l2"><a class="reference internal" href="我的笔记/技术002CRunc.html#running-containers">Running Containers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="我的笔记/技术002CRunc.html#supervisorrunc">通过Supervisor运行runc</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="我的笔记/技术002CRuntimeSpec.html">技术002CRuntimeSpec</a></li>
+<li class="toctree-l1"><a class="reference internal" href="我的笔记/技术002KCNCF.html">技术002KCNCF</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="我的笔记/技术002KCNCF.html#id1">参考文献</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="我的笔记/技术002KDeployment.html">技术002KDeployment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="我的笔记/技术002KELK.html">技术002KELK</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="我的笔记/技术002KELK.html#filebeat">Filebeat</a></li>
+<li class="toctree-l2"><a class="reference internal" href="我的笔记/技术002KELK.html#logstash">Logstash</a></li>
+<li class="toctree-l2"><a class="reference internal" href="我的笔记/技术002KELK.html#elasticearch">Elasticearch</a></li>
+<li class="toctree-l2"><a class="reference internal" href="我的笔记/技术002KELK.html#fluentd">Fluentd</a></li>
+<li class="toctree-l2"><a class="reference internal" href="我的笔记/技术002KELK.html#id8">问题记录</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="我的笔记/技术002KEtcd.html">技术002KEtcd</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="我的笔记/技术002KEtcd.html#id1">参数调优</a></li>
+<li class="toctree-l2"><a class="reference internal" href="我的笔记/技术002KEtcd.html#id6">性能测试</a></li>
+<li class="toctree-l2"><a class="reference internal" href="我的笔记/技术002KEtcd.html#id8">参考文献</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="我的笔记/技术002KGPU.html">技术002KGPU</a></li>
+<li class="toctree-l1"><a class="reference internal" href="我的笔记/技术002KHPA.html">技术002KHPA</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="我的笔记/技术002KHPA.html#id1">参考资料</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="我的笔记/技术002KIngress.html">技术002KIngress</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="我的笔记/技术002KIngress.html#ingress">Ingress</a></li>
+<li class="toctree-l2"><a class="reference internal" href="我的笔记/技术002KIngress.html#id1">其他服务暴露方式</a></li>
+<li class="toctree-l2"><a class="reference internal" href="我的笔记/技术002KIngress.html#id2">参考文献</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="我的笔记/技术002KLog.html">技术002KLog</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="我的笔记/技术002KLog.html#id1">日志级别</a></li>
+<li class="toctree-l2"><a class="reference internal" href="我的笔记/技术002KLog.html#id2">日志搜集方案</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="我的笔记/技术002KMonitor.html">技术002KMonitor</a></li>
+<li class="toctree-l1"><a class="reference internal" href="我的笔记/技术002KNBasic.html">技术002KNBasic</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="我的笔记/技术002KNBasic.html#basics">Basics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="我的笔记/技术002KNBasic.html#data-link-layer">Data Link Layer</a></li>
+<li class="toctree-l2"><a class="reference internal" href="我的笔记/技术002KNBasic.html#network-layer">Network Layer</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="我的笔记/技术002KNCalico.html">技术002KNCalico</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="我的笔记/技术002KNCalico.html#requirements">Requirements</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="我的笔记/技术002KNToolsIPRoute.html">技术002KNToolsIPRoute</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="我的笔记/技术002KNToolsIPRoute.html#id1">安装</a></li>
+<li class="toctree-l2"><a class="reference internal" href="我的笔记/技术002KNToolsIPRoute.html#id2">常用命令</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="我的笔记/技术002KNToolsIperf.html">技术002KNToolsIperf</a></li>
+<li class="toctree-l1"><a class="reference internal" href="我的笔记/技术002KNToolsIptables.html">技术002KNToolsIptables</a></li>
+<li class="toctree-l1"><a class="reference internal" href="我的笔记/技术002KNToolsTCPDUMP.html">技术002KNToolsTCPDUMP</a></li>
+<li class="toctree-l1"><a class="reference internal" href="我的笔记/技术002KNetwork.html">技术002KNetwork</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="我的笔记/技术002KNetwork.html#id1">基础知识网络</a></li>
+<li class="toctree-l2"><a class="reference internal" href="我的笔记/技术002KNetwork.html#id2">流量控制</a></li>
+<li class="toctree-l2"><a class="reference internal" href="我的笔记/技术002KNetwork.html#kube-proxy">Kube-Proxy</a></li>
+<li class="toctree-l2"><a class="reference internal" href="我的笔记/技术002KNetwork.html#id4">网络常用工具</a></li>
+<li class="toctree-l2"><a class="reference internal" href="我的笔记/技术002KNetwork.html#id5">网络方案</a></li>
+<li class="toctree-l2"><a class="reference internal" href="我的笔记/技术002KNetwork.html#id6">参考文档</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="我的笔记/技术002KNode.html">技术002KNode</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="我的笔记/技术002KNode.html#k8s">影响k8s集群节点数规模的因素</a></li>
+<li class="toctree-l2"><a class="reference internal" href="我的笔记/技术002KNode.html#id1">集群支持的节点数目</a></li>
+<li class="toctree-l2"><a class="reference internal" href="我的笔记/技术002KNode.html#node">集群的Node选择大资源配置机器还是小资源配置机器</a></li>
+<li class="toctree-l2"><a class="reference internal" href="我的笔记/技术002KNode.html#id4">集群到底用大资源节点还是小资源节点-总结</a></li>
+<li class="toctree-l2"><a class="reference internal" href="我的笔记/技术002KNode.html#id5">参考文献</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="我的笔记/技术002KOperator.html">技术002KOperator</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="我的笔记/技术002KOperator.html#id1">参考文献</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="我的笔记/技术002KOthers.html">技术002KOthers</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="我的笔记/技术002KOthers.html#docker-hub">Docker hub</a></li>
+<li class="toctree-l2"><a class="reference internal" href="我的笔记/技术002KOthers.html#gcr-io-k8s-gcr-io-quay-io">gcr.io k8s.gcr.io quay.io镜像拉取</a></li>
+<li class="toctree-l2"><a class="reference internal" href="我的笔记/技术002KOthers.html#cli">CLI 瑞士军刀</a></li>
+<li class="toctree-l2"><a class="reference internal" href="我的笔记/技术002KOthers.html#k8s-or-k8s">为什么k8s是系统级别的保障 or k8s的设计理念</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="我的笔记/技术002KPod.html">技术002KPod</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="我的笔记/技术002KPod.html#id1">分类</a></li>
+<li class="toctree-l2"><a class="reference internal" href="我的笔记/技术002KPod.html#id3">调度</a></li>
+<li class="toctree-l2"><a class="reference internal" href="我的笔记/技术002KPod.html#id4">资源</a></li>
+<li class="toctree-l2"><a class="reference internal" href="我的笔记/技术002KPod.html#id5">建议配置</a></li>
+<li class="toctree-l2"><a class="reference internal" href="我的笔记/技术002KPod.html#id7">特性</a></li>
+<li class="toctree-l2"><a class="reference internal" href="我的笔记/技术002KPod.html#id9">参考文献</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="我的笔记/技术002KPromethus.html">技术002KPromethus</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="我的笔记/技术002KPromethus.html#id1">参数解读&amp;存储实现原理</a></li>
+<li class="toctree-l2"><a class="reference internal" href="我的笔记/技术002KPromethus.html#id2">容量规划</a></li>
+<li class="toctree-l2"><a class="reference internal" href="我的笔记/技术002KPromethus.html#id3">高可用</a></li>
+<li class="toctree-l2"><a class="reference internal" href="我的笔记/技术002KPromethus.html#id4">报警</a></li>
+<li class="toctree-l2"><a class="reference internal" href="我的笔记/技术002KPromethus.html#trouble">Trouble</a></li>
+<li class="toctree-l2"><a class="reference internal" href="我的笔记/技术002KPromethus.html#id6">参考资料</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="我的笔记/技术002KService.html">技术002KService</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="我的笔记/技术002KService.html#service">Service转发的原理实现</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="我的笔记/技术002KSig.html">技术002KSig</a></li>
+<li class="toctree-l1"><a class="reference internal" href="我的笔记/技术002KStatefulSet.html">技术002KStatefulSet</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="我的笔记/技术002KStatefulSet.html#id1">参考文档</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="我的笔记/技术002Kubectl.html">技术002Kubectl</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="我的笔记/技术002Kubectl.html#id1">参考文献</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="我的笔记/技术002K压测.html">技术002K压测</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="我的笔记/技术002K压测.html#id1">压测方案</a></li>
+<li class="toctree-l2"><a class="reference internal" href="我的笔记/技术002K压测.html#id6">参考文献</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="我的笔记/技术002K生产.html">技术002K生产</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="我的笔记/技术002K生产.html#id1">环境搭建</a></li>
+<li class="toctree-l2"><a class="reference internal" href="我的笔记/技术002K生产.html#id2">生产环境</a></li>
+<li class="toctree-l2"><a class="reference internal" href="我的笔记/技术002K生产.html#id3">线上部署应用最佳实践</a></li>
+<li class="toctree-l2"><a class="reference internal" href="我的笔记/技术002K生产.html#k8s">k8s升级</a></li>
+<li class="toctree-l2"><a class="reference internal" href="我的笔记/技术002K生产.html#id4">问题排查手册</a></li>
+<li class="toctree-l2"><a class="reference internal" href="我的笔记/技术002K生产.html#id5">其他企业分享</a></li>
+<li class="toctree-l2"><a class="reference internal" href="我的笔记/技术002K生产.html#id6">蔚来汽车</a></li>
+<li class="toctree-l2"><a class="reference internal" href="我的笔记/技术002K生产.html#id7">k8s集群优化实践</a></li>
+<li class="toctree-l2"><a class="reference internal" href="我的笔记/技术002K生产.html#id8">参考文献</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="我的笔记/技术002K生产TroubleMaking.html">技术002K生产TroubleMaking</a></li>
+<li class="toctree-l1"><a class="reference internal" href="我的笔记/技术002K命令篇.html">技术002K命令篇</a></li>
+<li class="toctree-l1"><a class="reference internal" href="我的笔记/技术002K学习资料.html">技术002K学习资料</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="我的笔记/技术002K学习资料.html#blog">Blog</a></li>
+<li class="toctree-l2"><a class="reference internal" href="我的笔记/技术002K学习资料.html#github">GitHub 仓库</a></li>
+<li class="toctree-l2"><a class="reference internal" href="我的笔记/技术002K学习资料.html#twitter">Twitter 账号</a></li>
+<li class="toctree-l2"><a class="reference internal" href="我的笔记/技术002K学习资料.html#gpu">GPU参考资料</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="我的笔记/技术002K流量处理.html">技术002K流量处理</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="我的笔记/技术002K流量处理.html#id1">常见发布名次解释</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<div class="section" id="indices-and-tables">
+<h1>Indices and tables<a class="headerlink" href="#indices-and-tables" title="永久链接至标题">¶</a></h1>
+<ul class="simple">
+<li><p><a class="reference internal" href="genindex.html"><span class="std std-ref">索引</span></a></p></li>
+<li><p><a class="reference internal" href="py-modindex.html"><span class="std std-ref">模块索引</span></a></p></li>
+<li><p><a class="reference internal" href="search.html"><span class="std std-ref">搜索页面</span></a></p></li>
+</ul>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="#">目录</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Welcome to mrmote’s kubernetes note’s documentation!</a></li>
+<li><a class="reference internal" href="#indices-and-tables">Indices and tables</a></li>
+</ul>
+
+  <h4>下一个主题</h4>
+  <p class="topless"><a href="我的笔记/model.html"
+                        title="下一章">&lt;no title&gt;</a></p>
+  <div role="note" aria-label="source link">
+    <h3>本页</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/index.rst.txt"
+            rel="nofollow">显示源代码</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">快速搜索</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="转向" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>导航</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="总目录"
+             >索引</a></li>
+        <li class="right" >
+          <a href="我的笔记/model.html" title="&lt;no title&gt;"
+             >下一页</a> |</li>
+        <li class="nav-item nav-item-0"><a href="#">mrmote&#39;s kubernetes note 1.0 文档</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; 版权所有 2019, mrmote.
+      由 <a href="http://sphinx-doc.org/">Sphinx</a> 2.2.1 创建。
+    </div>
+  </body>
+</html>

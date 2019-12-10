@@ -1,0 +1,374 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml" lang="zh_CN">
+  <head>
+    <meta charset="utf-8" />
+    <title>技术002KPod &#8212; mrmote&#39;s kubernetes note 1.0 文档</title>
+    <link rel="stylesheet" href="../_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/language_data.js"></script>
+    <script type="text/javascript" src="../_static/translations.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <link rel="index" title="索引" href="../genindex.html" />
+    <link rel="search" title="搜索" href="../search.html" />
+    <link rel="next" title="技术002KPromethus" href="技术002KPromethus.html" />
+    <link rel="prev" title="技术002KOthers" href="技术002KOthers.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>导航</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="总目录"
+             accesskey="I">索引</a></li>
+        <li class="right" >
+          <a href="技术002KPromethus.html" title="技术002KPromethus"
+             accesskey="N">下一页</a> |</li>
+        <li class="right" >
+          <a href="技术002KOthers.html" title="技术002KOthers"
+             accesskey="P">上一页</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">mrmote&#39;s kubernetes note 1.0 文档</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <p>技术002KPod</p>
+<div class="section" id="kpod">
+<h1>技术002KPod<a class="headerlink" href="#kpod" title="永久链接至标题">¶</a></h1>
+<ul class="simple">
+<li><p><a href="#id10"><span class="problematic" id="id11">`技术002KPod &lt;&gt;`__</span></a></p>
+<ul>
+<li><p><a href="#id10"><span class="problematic" id="id12">`分类 &lt;&gt;`__</span></a></p>
+<ul>
+<li><p><a href="#id10"><span class="problematic" id="id13">`静态Pod &lt;&gt;`__</span></a></p></li>
+<li><p><a href="#id10"><span class="problematic" id="id14">`普通Pod &lt;&gt;`__</span></a></p></li>
+</ul>
+</li>
+<li><p><a href="#id10"><span class="problematic" id="id15">`调度 &lt;&gt;`__</span></a></p></li>
+<li><p><a href="#id10"><span class="problematic" id="id16">`资源 &lt;&gt;`__</span></a></p></li>
+<li><p><a href="#id10"><span class="problematic" id="id17">`建议配置 &lt;&gt;`__</span></a></p>
+<ul>
+<li><p><a href="#id10"><span class="problematic" id="id18">`最大Pod数目 &lt;&gt;`__</span></a></p></li>
+</ul>
+</li>
+<li><p><a href="#id10"><span class="problematic" id="id19">`特性 &lt;&gt;`__</span></a></p>
+<ul>
+<li><p><a href="#id10"><span class="problematic" id="id20">`Node affinity节点亲和性 &lt;&gt;`__</span></a></p></li>
+<li><p><a href="#id10"><span class="problematic" id="id21">`Pod间的亲和性和反亲和性 &lt;&gt;`__</span></a></p></li>
+<li><p><a href="#id10"><span class="problematic" id="id22">`启动策略Always/OnFailure/Never &lt;&gt;`__</span></a></p></li>
+</ul>
+</li>
+<li><p><a href="#id10"><span class="problematic" id="id23">`参考文献 &lt;&gt;`__</span></a></p></li>
+</ul>
+</li>
+</ul>
+<div class="section" id="id1">
+<h2>分类<a class="headerlink" href="#id1" title="永久链接至标题">¶</a></h2>
+<div class="section" id="pod">
+<h3>静态Pod<a class="headerlink" href="#pod" title="永久链接至标题">¶</a></h3>
+<p>有人提到static
+Pod，这种其实也属于节点固定，但这种Pod局限很大，比如：不能挂载configmaps和secrets等，这个由Admission
+Controllers控制。</p>
+</div>
+<div class="section" id="id2">
+<h3>普通Pod<a class="headerlink" href="#id2" title="永久链接至标题">¶</a></h3>
+</div>
+</div>
+<div class="section" id="id3">
+<h2>调度<a class="headerlink" href="#id3" title="永久链接至标题">¶</a></h2>
+<ul class="simple">
+<li><p>已被调度的回调：</p></li>
+</ul>
+<p>已被调度的pod根据FilterFunc中定义的逻辑过滤，nodeName不为空，返回true时，将会走Handler中定义的AddFunc、UpdateFunc、DeleteFunc，这个其实最终不会加入到podQueue中，但需要加入到本地缓存中，因为调度器会维护一份节点上pod列表的缓存。</p>
+<ul class="simple">
+<li><p>未被调度的回调：</p></li>
+</ul>
+<p>未被调度的pod根据FilterFunc中定义的逻辑过滤，nodeName为空且pod的SchedulerName和该调度器的名称一致时返回true；返回true时，将会走Handler中定义的AddFunc、UpdateFunc、DeleteFunc，这个最终会加入到podQueue中，kube-scheduler开始调度</p>
+</div>
+<div class="section" id="id4">
+<h2>资源<a class="headerlink" href="#id4" title="永久链接至标题">¶</a></h2>
+<p>第一阶段由运行在master上的AttachDetachController负责，为这个PV完成
+Attach 操作，为宿主机挂载远程磁盘；</p>
+<p>第二阶段是运行在每个节点上kubelet组件的内部，把第一步attach的远程磁盘
+mount
+到宿主机目录。这个控制循环叫VolumeManagerReconciler，运行在独立的Goroutine，不会阻塞kubelet主控制循环。</p>
+<p>完成这两步，PV对应的“持久化
+Volume”就准备好了，POD可以正常启动，将“持久化
+Volume”挂载在容器内指定的路径。</p>
+</div>
+<div class="section" id="id5">
+<h2>建议配置<a class="headerlink" href="#id5" title="永久链接至标题">¶</a></h2>
+<div class="section" id="id6">
+<h3>最大Pod数目<a class="headerlink" href="#id6" title="永久链接至标题">¶</a></h3>
+<p>一个node允许最大Pod数是110，这是因为node
+health机制会遍历这个node上的所有容器的状态</p>
+<p>静态 pod指在特定的节点上直接通过
+kubelet守护进程进行管理，APIServer无法管理。它没有跟任何的控制器进行关联，kubelet
+守护进程对它进行监控，如果崩溃了，kubelet 守护进程会重启它。Kubelet
+通过APIServer为每个静态 pod 创建 镜像 pod，这些镜像 pod 对于
+APIServer是可见的（即kubectl可以查询到这些Pod），但是不受APIServer控制。</p>
+</div>
+</div>
+<div class="section" id="id7">
+<h2>特性<a class="headerlink" href="#id7" title="永久链接至标题">¶</a></h2>
+<p>NodeSelector-&gt;Node affinity -&gt; Pod Affinity/AntiAffinity</p>
+<div class="section" id="node-affinity">
+<h3>Node affinity节点亲和性<a class="headerlink" href="#node-affinity" title="永久链接至标题">¶</a></h3>
+<p>两种类型 requiredDuringSchedulingIgnoredDuringExecution-》“hard”
+-》必须满足
+preferredDuringSchedulingIgnoredDuringExecution-》“soft”-》尽量满足
+pods/pod-with-node-affinity.yaml</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">apiVersion</span><span class="p">:</span> <span class="n">v1</span>
+<span class="n">kind</span><span class="p">:</span> <span class="n">Pod</span>
+<span class="n">metadata</span><span class="p">:</span>
+  <span class="n">name</span><span class="p">:</span> <span class="k">with</span><span class="o">-</span><span class="n">node</span><span class="o">-</span><span class="n">affinity</span>
+<span class="n">spec</span><span class="p">:</span>
+  <span class="n">affinity</span><span class="p">:</span>
+    <span class="n">nodeAffinity</span><span class="p">:</span>
+      <span class="n">requiredDuringSchedulingIgnoredDuringExecution</span><span class="p">:</span>
+        <span class="n">nodeSelectorTerms</span><span class="p">:</span>
+
+        <span class="o">-</span> <span class="n">matchExpressions</span><span class="p">:</span>
+          <span class="o">-</span> <span class="n">key</span><span class="p">:</span> <span class="n">kubernetes</span><span class="o">.</span><span class="n">io</span><span class="o">/</span><span class="n">e2e</span><span class="o">-</span><span class="n">az</span><span class="o">-</span><span class="n">name</span>
+
+            <span class="n">operator</span><span class="p">:</span> <span class="n">In</span>
+            <span class="n">values</span><span class="p">:</span>
+
+            <span class="o">-</span> <span class="n">e2e</span><span class="o">-</span><span class="n">az1</span>
+            <span class="o">-</span> <span class="n">e2e</span><span class="o">-</span><span class="n">az2</span>
+
+      <span class="n">preferredDuringSchedulingIgnoredDuringExecution</span><span class="p">:</span>
+
+      <span class="o">-</span> <span class="n">weight</span><span class="p">:</span> <span class="mi">1</span>
+
+        <span class="n">preference</span><span class="p">:</span>
+          <span class="n">matchExpressions</span><span class="p">:</span>
+
+          <span class="o">-</span> <span class="n">key</span><span class="p">:</span> <span class="n">another</span><span class="o">-</span><span class="n">node</span><span class="o">-</span><span class="n">label</span><span class="o">-</span><span class="n">key</span>
+
+            <span class="n">operator</span><span class="p">:</span> <span class="n">In</span>
+            <span class="n">values</span><span class="p">:</span>
+
+            <span class="o">-</span> <span class="n">another</span><span class="o">-</span><span class="n">node</span><span class="o">-</span><span class="n">label</span><span class="o">-</span><span class="n">value</span>
+
+  <span class="n">containers</span><span class="p">:</span>
+
+  <span class="o">-</span> <span class="n">name</span><span class="p">:</span> <span class="k">with</span><span class="o">-</span><span class="n">node</span><span class="o">-</span><span class="n">affinity</span>
+
+    <span class="n">image</span><span class="p">:</span> <span class="n">k8s</span><span class="o">.</span><span class="n">gcr</span><span class="o">.</span><span class="n">io</span><span class="o">/</span><span class="n">pause</span><span class="p">:</span><span class="mf">2.0</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id8">
+<h3>Pod间的亲和性和反亲和性<a class="headerlink" href="#id8" title="永久链接至标题">¶</a></h3>
+<p><em>Inter-pod affinity and anti-affinity require substantial amount of
+processing which can slow down scheduling in large clusters
+significantly. We do not recommend using them in clusters larger than
+several hundred nodes.</em> 在大规模集群中会降低性能，因此，不建议使用。</p>
+<p><em>Note: Pod anti-affinity requires nodes to be consistently labelled,
+i.e. every node in the cluster must have an appropriate label matching
+topologyKey. If some or all nodes are missing the specified topologyKey
+label, it can lead to unintended behavior.</em>
+要求每个节点中必须存在该label标签</p>
+<p>topologyKey代表节点 label的Key，默认的标签有 kubernetes.io/hostname
+failure-domain.beta.kubernetes.io/zone
+failure-domain.beta.kubernetes.io/region
+beta.kubernetes.io/instance-type kubernetes.io/os kubernetes.io/arch
+PodAntiAffinity配置，保证该该服务的两个实例不会共存在一个节点上。</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">apiVersion</span><span class="p">:</span> <span class="n">apps</span><span class="o">/</span><span class="n">v1</span>
+<span class="n">kind</span><span class="p">:</span> <span class="n">Deployment</span>
+<span class="n">metadata</span><span class="p">:</span>
+  <span class="n">name</span><span class="p">:</span> <span class="n">redis</span><span class="o">-</span><span class="n">cache</span>
+<span class="n">spec</span><span class="p">:</span>
+  <span class="n">selector</span><span class="p">:</span>
+    <span class="n">matchLabels</span><span class="p">:</span>
+      <span class="n">app</span><span class="p">:</span> <span class="n">store</span>
+  <span class="n">replicas</span><span class="p">:</span> <span class="mi">3</span>
+  <span class="n">template</span><span class="p">:</span>
+    <span class="n">metadata</span><span class="p">:</span>
+      <span class="n">labels</span><span class="p">:</span>
+        <span class="n">app</span><span class="p">:</span> <span class="n">store</span>
+    <span class="n">spec</span><span class="p">:</span>
+      <span class="n">affinity</span><span class="p">:</span>
+        <span class="n">podAntiAffinity</span><span class="p">:</span>
+          <span class="n">requiredDuringSchedulingIgnoredDuringExecution</span><span class="p">:</span>
+
+          <span class="o">-</span> <span class="n">labelSelector</span><span class="p">:</span>
+
+              <span class="n">matchExpressions</span><span class="p">:</span>
+
+              <span class="o">-</span> <span class="n">key</span><span class="p">:</span> <span class="n">app</span>
+
+                <span class="n">operator</span><span class="p">:</span> <span class="n">In</span>
+                <span class="n">values</span><span class="p">:</span>
+
+                <span class="o">-</span> <span class="n">store</span>
+
+            <span class="n">topologyKey</span><span class="p">:</span> <span class="s2">&quot;kubernetes.io/hostname&quot;</span>
+      <span class="n">containers</span><span class="p">:</span>
+
+      <span class="o">-</span> <span class="n">name</span><span class="p">:</span> <span class="n">redis</span><span class="o">-</span><span class="n">server</span>
+
+        <span class="n">image</span><span class="p">:</span> <span class="n">redis</span><span class="p">:</span><span class="mf">3.2</span><span class="o">-</span><span class="n">alpine</span>
+</pre></div>
+</div>
+<p>保证web-server的每个实例不会共存在同一个节点，尽量和标签为app=store的pod共存在同一台机器上</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">apiVersion</span><span class="p">:</span> <span class="n">apps</span><span class="o">/</span><span class="n">v1</span>
+<span class="n">kind</span><span class="p">:</span> <span class="n">Deployment</span>
+<span class="n">metadata</span><span class="p">:</span>
+  <span class="n">name</span><span class="p">:</span> <span class="n">web</span><span class="o">-</span><span class="n">server</span>
+<span class="n">spec</span><span class="p">:</span>
+  <span class="n">selector</span><span class="p">:</span>
+    <span class="n">matchLabels</span><span class="p">:</span>
+      <span class="n">app</span><span class="p">:</span> <span class="n">web</span><span class="o">-</span><span class="n">store</span>
+  <span class="n">replicas</span><span class="p">:</span> <span class="mi">3</span>
+  <span class="n">template</span><span class="p">:</span>
+    <span class="n">metadata</span><span class="p">:</span>
+      <span class="n">labels</span><span class="p">:</span>
+        <span class="n">app</span><span class="p">:</span> <span class="n">web</span><span class="o">-</span><span class="n">store</span>
+    <span class="n">spec</span><span class="p">:</span>
+      <span class="n">affinity</span><span class="p">:</span>
+        <span class="n">podAntiAffinity</span><span class="p">:</span>
+          <span class="n">requiredDuringSchedulingIgnoredDuringExecution</span><span class="p">:</span>
+
+          <span class="o">-</span> <span class="n">labelSelector</span><span class="p">:</span>
+
+              <span class="n">matchExpressions</span><span class="p">:</span>
+
+              <span class="o">-</span> <span class="n">key</span><span class="p">:</span> <span class="n">app</span>
+
+                <span class="n">operator</span><span class="p">:</span> <span class="n">In</span>
+                <span class="n">values</span><span class="p">:</span>
+
+                <span class="o">-</span> <span class="n">web</span><span class="o">-</span><span class="n">store</span>
+
+            <span class="n">topologyKey</span><span class="p">:</span> <span class="s2">&quot;kubernetes.io/hostname&quot;</span>
+        <span class="n">podAffinity</span><span class="p">:</span>
+          <span class="n">requiredDuringSchedulingIgnoredDuringExecution</span><span class="p">:</span>
+
+          <span class="o">-</span> <span class="n">labelSelector</span><span class="p">:</span>
+
+              <span class="n">matchExpressions</span><span class="p">:</span>
+
+              <span class="o">-</span> <span class="n">key</span><span class="p">:</span> <span class="n">app</span>
+
+                <span class="n">operator</span><span class="p">:</span> <span class="n">In</span>
+                <span class="n">values</span><span class="p">:</span>
+
+                <span class="o">-</span> <span class="n">store</span>
+
+            <span class="n">topologyKey</span><span class="p">:</span> <span class="s2">&quot;kubernetes.io/hostname&quot;</span>
+      <span class="n">containers</span><span class="p">:</span>
+
+      <span class="o">-</span> <span class="n">name</span><span class="p">:</span> <span class="n">web</span><span class="o">-</span><span class="n">app</span>
+
+        <span class="n">image</span><span class="p">:</span> <span class="n">nginx</span><span class="p">:</span><span class="mf">1.12</span><span class="o">-</span><span class="n">alpine</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="always-onfailure-never">
+<h3>启动策略Always/OnFailure/Never<a class="headerlink" href="#always-onfailure-never" title="永久链接至标题">¶</a></h3>
+<ul class="simple">
+<li><p>Daemonset里的pod
+Template下必须有RestartPolicy，如果没指定，会默认为Always</p></li>
+<li><p>另外Deployment、Statefulset的restartPolicy也必须为Always，保证pod异常退出，或者健康检查
+livenessProbe失败后由kubelet重启容器。<a class="reference external" href="https://kubernetes.io/zh/docs/concepts/workloads/controllers/deployment">https://kubernetes.io/zh/docs/concepts/workloads/controllers/deployment</a></p></li>
+<li><p>Job和CronJob是运行一次的pod，restartPolicy只能为OnFailure或Never，确保容器执行完成后不再重启。<a class="reference external" href="https://kubernetes.io/docs/concepts/workloads/controllers/jobs-run-to-completion/">https://kubernetes.io/docs/concepts/workloads/controllers/jobs-run-to-completion/</a></p></li>
+</ul>
+</div>
+</div>
+<div class="section" id="id9">
+<h2>参考文献<a class="headerlink" href="#id9" title="永久链接至标题">¶</a></h2>
+<p><a class="reference external" href="https://mp.weixin.qq.com/s/UcpP4koV1tTRxfM7Vmi0Ug">Pod调度源码分析</a></p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../index.html">目录</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">技术002KPod</a><ul>
+<li><a class="reference internal" href="#id1">分类</a><ul>
+<li><a class="reference internal" href="#pod">静态Pod</a></li>
+<li><a class="reference internal" href="#id2">普通Pod</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#id3">调度</a></li>
+<li><a class="reference internal" href="#id4">资源</a></li>
+<li><a class="reference internal" href="#id5">建议配置</a><ul>
+<li><a class="reference internal" href="#id6">最大Pod数目</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#id7">特性</a><ul>
+<li><a class="reference internal" href="#node-affinity">Node affinity节点亲和性</a></li>
+<li><a class="reference internal" href="#id8">Pod间的亲和性和反亲和性</a></li>
+<li><a class="reference internal" href="#always-onfailure-never">启动策略Always/OnFailure/Never</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#id9">参考文献</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>上一个主题</h4>
+  <p class="topless"><a href="技术002KOthers.html"
+                        title="上一章">技术002KOthers</a></p>
+  <h4>下一个主题</h4>
+  <p class="topless"><a href="技术002KPromethus.html"
+                        title="下一章">技术002KPromethus</a></p>
+  <div role="note" aria-label="source link">
+    <h3>本页</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/我的笔记/技术002KPod.rst.txt"
+            rel="nofollow">显示源代码</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">快速搜索</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="转向" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>导航</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="总目录"
+             >索引</a></li>
+        <li class="right" >
+          <a href="技术002KPromethus.html" title="技术002KPromethus"
+             >下一页</a> |</li>
+        <li class="right" >
+          <a href="技术002KOthers.html" title="技术002KOthers"
+             >上一页</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">mrmote&#39;s kubernetes note 1.0 文档</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; 版权所有 2019, mrmote.
+      由 <a href="http://sphinx-doc.org/">Sphinx</a> 2.2.1 创建。
+    </div>
+  </body>
+</html>

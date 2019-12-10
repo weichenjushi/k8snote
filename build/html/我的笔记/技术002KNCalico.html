@@ -1,0 +1,153 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml" lang="zh_CN">
+  <head>
+    <meta charset="utf-8" />
+    <title>技术002KNCalico &#8212; mrmote&#39;s kubernetes note 1.0 文档</title>
+    <link rel="stylesheet" href="../_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/language_data.js"></script>
+    <script type="text/javascript" src="../_static/translations.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <link rel="index" title="索引" href="../genindex.html" />
+    <link rel="search" title="搜索" href="../search.html" />
+    <link rel="next" title="技术002KNToolsIPRoute" href="技术002KNToolsIPRoute.html" />
+    <link rel="prev" title="技术002KNBasic" href="技术002KNBasic.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>导航</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="总目录"
+             accesskey="I">索引</a></li>
+        <li class="right" >
+          <a href="技术002KNToolsIPRoute.html" title="技术002KNToolsIPRoute"
+             accesskey="N">下一页</a> |</li>
+        <li class="right" >
+          <a href="技术002KNBasic.html" title="技术002KNBasic"
+             accesskey="P">上一页</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">mrmote&#39;s kubernetes note 1.0 文档</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <p>技术002KNCalico</p>
+<ul class="simple">
+<li><p><a href="#id1"><span class="problematic" id="id2">`技术002KNCalico &lt;&gt;`__</span></a></p>
+<ul>
+<li><p><a href="#id1"><span class="problematic" id="id3">`Requirements &lt;&gt;`__</span></a></p>
+<ul>
+<li><p><a href="#id1"><span class="problematic" id="id4">`Basic &lt;&gt;`__</span></a></p></li>
+<li><p><a href="#id1"><span class="problematic" id="id5">`IP pool &lt;&gt;`__</span></a></p></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<div class="section" id="kncalico">
+<h1>技术002KNCalico<a class="headerlink" href="#kncalico" title="永久链接至标题">¶</a></h1>
+<div class="section" id="requirements">
+<h2>Requirements<a class="headerlink" href="#requirements" title="永久链接至标题">¶</a></h2>
+<div class="section" id="basic">
+<h3>Basic<a class="headerlink" href="#basic" title="永久链接至标题">¶</a></h3>
+<p>Calico can run on any Kubernetes cluster which meets the following
+criteria.</p>
+<ul class="simple">
+<li><p>The kubelet must be configured to use CNI network plugins (e.g
+–network-plugin=cni).</p></li>
+<li><p>The kube-proxy must be started in iptables proxy mode. This is the
+default as of Kubernetes v1.2.0.</p></li>
+<li><p>The kube-proxy must be started without the –masquerade-all flag,
+which conflicts with Calico policy.</p></li>
+<li><p>The Kubernetes NetworkPolicy API requires at least Kubernetes version
+v1.3.0.</p></li>
+</ul>
+</div>
+<div class="section" id="ip-pool">
+<h3>IP pool<a class="headerlink" href="#ip-pool" title="永久链接至标题">¶</a></h3>
+<p>calico网段默认是</p>
+<p>in Kubernetes, all three of the following arguments must be equal to, or
+contain, the Calico IP pool CIDRs:</p>
+<p>kube-apiserver: –pod-network-cidr kube-proxy: –cluster-cidr
+kube-controller-manager: –cluster-cidr</p>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../index.html">目录</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">技术002KNCalico</a><ul>
+<li><a class="reference internal" href="#requirements">Requirements</a><ul>
+<li><a class="reference internal" href="#basic">Basic</a></li>
+<li><a class="reference internal" href="#ip-pool">IP pool</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  <h4>上一个主题</h4>
+  <p class="topless"><a href="技术002KNBasic.html"
+                        title="上一章">技术002KNBasic</a></p>
+  <h4>下一个主题</h4>
+  <p class="topless"><a href="技术002KNToolsIPRoute.html"
+                        title="下一章">技术002KNToolsIPRoute</a></p>
+  <div role="note" aria-label="source link">
+    <h3>本页</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/我的笔记/技术002KNCalico.rst.txt"
+            rel="nofollow">显示源代码</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">快速搜索</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="转向" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>导航</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="总目录"
+             >索引</a></li>
+        <li class="right" >
+          <a href="技术002KNToolsIPRoute.html" title="技术002KNToolsIPRoute"
+             >下一页</a> |</li>
+        <li class="right" >
+          <a href="技术002KNBasic.html" title="技术002KNBasic"
+             >上一页</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">mrmote&#39;s kubernetes note 1.0 文档</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; 版权所有 2019, mrmote.
+      由 <a href="http://sphinx-doc.org/">Sphinx</a> 2.2.1 创建。
+    </div>
+  </body>
+</html>

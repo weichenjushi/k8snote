@@ -1,0 +1,236 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml" lang="zh_CN">
+  <head>
+    <meta charset="utf-8" />
+    <title>技术002KNode &#8212; mrmote&#39;s kubernetes note 1.0 文档</title>
+    <link rel="stylesheet" href="../_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/language_data.js"></script>
+    <script type="text/javascript" src="../_static/translations.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <link rel="index" title="索引" href="../genindex.html" />
+    <link rel="search" title="搜索" href="../search.html" />
+    <link rel="next" title="技术002KOperator" href="技术002KOperator.html" />
+    <link rel="prev" title="技术002KNetwork" href="技术002KNetwork.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>导航</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="总目录"
+             accesskey="I">索引</a></li>
+        <li class="right" >
+          <a href="技术002KOperator.html" title="技术002KOperator"
+             accesskey="N">下一页</a> |</li>
+        <li class="right" >
+          <a href="技术002KNetwork.html" title="技术002KNetwork"
+             accesskey="P">上一页</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">mrmote&#39;s kubernetes note 1.0 文档</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <p>技术002KNode</p>
+<div class="section" id="knode">
+<h1>技术002KNode<a class="headerlink" href="#knode" title="永久链接至标题">¶</a></h1>
+<ul class="simple">
+<li><p><a href="#id6"><span class="problematic" id="id7">`技术002KNode &lt;&gt;`__</span></a></p>
+<ul>
+<li><p><a href="#id6"><span class="problematic" id="id8">`影响k8s集群节点数规模的因素 &lt;&gt;`__</span></a></p></li>
+<li><p><a href="#id6"><span class="problematic" id="id9">`集群支持的节点数目 &lt;&gt;`__</span></a></p>
+<ul>
+<li><p><a href="#id6"><span class="problematic" id="id10">`v1.16 - 5000 &lt;&gt;`__</span></a></p></li>
+</ul>
+</li>
+<li><p><a href="#id6"><span class="problematic" id="id11">`集群的Node选择大资源配置机器还是小资源配置机器 &lt;&gt;`__</span></a></p>
+<ul>
+<li><p><a href="#id6"><span class="problematic" id="id12">`大资源节点 &lt;&gt;`__</span></a></p></li>
+<li><p><a href="#id6"><span class="problematic" id="id13">`小资源节点 &lt;&gt;`__</span></a></p></li>
+</ul>
+</li>
+<li><p><a href="#id6"><span class="problematic" id="id14">`集群到底用大资源节点还是小资源节点-总结 &lt;&gt;`__</span></a></p></li>
+<li><p><a href="#id6"><span class="problematic" id="id15">`参考文献 &lt;&gt;`__</span></a></p></li>
+</ul>
+</li>
+</ul>
+<div class="section" id="k8s">
+<h2>影响k8s集群节点数规模的因素<a class="headerlink" href="#k8s" title="永久链接至标题">¶</a></h2>
+<ul class="simple">
+<li><p>etcd</p></li>
+</ul>
+<p>如果我们继续使用 etcd v2 的话，是无法负载 5000 节点的集群规模的。etcd v2
+中的 watch 实现是一个主要障碍。在 5000
+节点规模的集群中，我们每秒需要向同一个 watcher 发送至少 500 个 watch
+事件，这在 v2 中是不可能的。</p>
+</div>
+<div class="section" id="id1">
+<h2>集群支持的节点数目<a class="headerlink" href="#id1" title="永久链接至标题">¶</a></h2>
+<div class="section" id="v1-16-5000">
+<h3>v1.16 - 5000<a class="headerlink" href="#v1-16-5000" title="永久链接至标题">¶</a></h3>
+<p>At v1.16, Kubernetes supports clusters with up to 5000 nodes. More
+specifically, we support configurations that meet all of the following
+criteria:</p>
+<p>前提条件：</p>
+<ul class="simple">
+<li><p>No more than 5000 nodes</p></li>
+<li><p>No more than 150000(15w) total pods</p></li>
+<li><p>No more than 300000(30w) total containers</p></li>
+<li><p>No more than 100 pods per node</p></li>
+</ul>
+</div>
+</div>
+<div class="section" id="node">
+<h2>集群的Node选择大资源配置机器还是小资源配置机器<a class="headerlink" href="#node" title="永久链接至标题">¶</a></h2>
+<div class="section" id="id2">
+<h3>大资源节点<a class="headerlink" href="#id2" title="永久链接至标题">¶</a></h3>
+<ul class="simple">
+<li><p>优点</p></li>
+</ul>
+<p>1 Less management overhead 降低管理成本 2 Lower costs per node
+针对于裸机，每个节点更少的费用，因为资源和节点数目不是线性增加的
+针对于公有云，使用大机器不会节省费用 3.Allows running resource-hungry
+applications</p>
+<ul class="simple">
+<li><p>缺点</p></li>
+</ul>
+<p>1 Large number of pods per node 2 Limited replication 3 Higher blast
+radius 4 Large scaling increments</p>
+</div>
+<div class="section" id="id3">
+<h3>小资源节点<a class="headerlink" href="#id3" title="永久链接至标题">¶</a></h3>
+<ul class="simple">
+<li><p>优点</p></li>
+</ul>
+<p>1 Reduced blast radius 机器的资源越小，宕机的话影响的范围越小 2 Allows
+high replication 将副本数打的更散一点儿，服务保障行更好</p>
+<ul class="simple">
+<li><p>缺点</p></li>
+</ul>
+<p>1 Large number of nodes But large numbers of nodes can be a challenge
+for the Kubernetes control plane. 1)节点之间互相通信以节点的平方增加
+2）controller manager组件挨个遍历每个节点的健康情况，增加了该组件的负担
+3）etcd的负担，kubelet通过api-server watch object的变化
+官方支持5009节点，实际上500个节点就有点问题了
+更多的node节点就需要配置更好的master。</p>
+<p>As you can see, for 500 worker nodes, the used master nodes have 32 and
+36 CPU cores and 120 GB and 60 GB of memory, respectively.</p>
+<p>**So, if you intend to use a large number of small nodes, there are two
+things you need to keep in mind</p>
+<p>1.The more worker nodes you have, the more performant master nodes you
+need</p>
+<p>2.If you plan to use more than 500 nodes, you can expect to hit some
+performance bottlenecks that require some effort to solve**</p>
+<p>2 More system overhead</p>
+<p>For example, imagine that all system daemons of a single node together
+use 0.1 CPU cores and 0.1 GB of memory.</p>
+<p>If you have a single node of 10 CPU cores and 10 GB of memory, then the
+daemons consume 1% of your cluster’s capacity.</p>
+<p>如果物理机10c，10G，那么daemons守护进程将会占用1/100的资源，那么1/100的资源账单将会用来运行系统进程。</p>
+<p>On the other hand, if you have 10 nodes of 1 CPU core and 1 GB of
+memory, then the daemons consume 10% of your cluster’s capacity.</p>
+<p>Thus, in the second case, 10% of your bill is for running the system,
+whereas in the first case, it’s only 1%.</p>
+<p>3 Lower resource utilisation 4 Pod limits on small nodes</p>
+</div>
+</div>
+<div class="section" id="id4">
+<h2>集群到底用大资源节点还是小资源节点-总结<a class="headerlink" href="#id4" title="永久链接至标题">¶</a></h2>
+<ul class="simple">
+<li><p>根据你的应用来调整你的集群</p></li>
+<li><p>集群的节点的配置多样化</p></li>
+</ul>
+</div>
+<div class="section" id="id5">
+<h2>参考文献<a class="headerlink" href="#id5" title="永久链接至标题">¶</a></h2>
+<p><a class="reference external" href="https://static.sched.com/hosted_files/kccnceu18/4e/kubecon2018-not-one-size-fits-all-how-to-size-kubernetes-clusters.pdf">not-one-size-fits-all-how-to-size-kubernetes-clusters.pdf</a></p>
+<p><a class="reference external" href="https://kubernetes.io/docs/setup/best-practices/cluster-large/">Building large
+clusters</a></p>
+<p>Architecting Kubernetes clusters — choosing a worker node size</p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../index.html">目录</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">技术002KNode</a><ul>
+<li><a class="reference internal" href="#k8s">影响k8s集群节点数规模的因素</a></li>
+<li><a class="reference internal" href="#id1">集群支持的节点数目</a><ul>
+<li><a class="reference internal" href="#v1-16-5000">v1.16 - 5000</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#node">集群的Node选择大资源配置机器还是小资源配置机器</a><ul>
+<li><a class="reference internal" href="#id2">大资源节点</a></li>
+<li><a class="reference internal" href="#id3">小资源节点</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#id4">集群到底用大资源节点还是小资源节点-总结</a></li>
+<li><a class="reference internal" href="#id5">参考文献</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>上一个主题</h4>
+  <p class="topless"><a href="技术002KNetwork.html"
+                        title="上一章">技术002KNetwork</a></p>
+  <h4>下一个主题</h4>
+  <p class="topless"><a href="技术002KOperator.html"
+                        title="下一章">技术002KOperator</a></p>
+  <div role="note" aria-label="source link">
+    <h3>本页</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/我的笔记/技术002KNode.rst.txt"
+            rel="nofollow">显示源代码</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">快速搜索</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="转向" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>导航</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="总目录"
+             >索引</a></li>
+        <li class="right" >
+          <a href="技术002KOperator.html" title="技术002KOperator"
+             >下一页</a> |</li>
+        <li class="right" >
+          <a href="技术002KNetwork.html" title="技术002KNetwork"
+             >上一页</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">mrmote&#39;s kubernetes note 1.0 文档</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; 版权所有 2019, mrmote.
+      由 <a href="http://sphinx-doc.org/">Sphinx</a> 2.2.1 创建。
+    </div>
+  </body>
+</html>
