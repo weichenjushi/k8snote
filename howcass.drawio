@@ -1,1 +1,76 @@
-<mxfile modified="2020-11-14T03:09:30.383Z" host="app.diagrams.net" agent="5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/78.0.3904.97 Safari/537.36" etag="dQXkQKJPG-f1Nirc0Pym" version="13.9.8" type="github"><diagram id="f106602c-feb2-e66a-4537-3a34d633f6aa" name="Page-1">7VnbcuI4EP0aHpPyHXgMJGSmKlubmkzVPFLCFrYH2fLIcoD9+m1Zku8EsvHsZC6YB6t1dffpcyR7Yi+Twz1DWfQXDTCZWEZwmNi3E8syHcuaiL8RHKVlarrSELI4UI1qw1P8D1ZGQ1mLOMB5qyGnlPA4axt9mqbY5y0bYozu2822lLRnzVCIe4YnH5G+9Usc8EhZTW9eV3zAcRipqWfWVFZskL8LGS1SNd/EsrflT1YnSI+lHjSPUED3DZN9N7GXjFIu75LDEhPhW+022W91orZaN8Mpv6iDI3s8I1JgvWSPQN/FBm5CcXNPaQiOESPJGhiuqlwSWgRQ90gQ31KWqMfiR+3KbUzIkhLKyqK98sQFHXPO6A7rmpSmWBi1OwwohAwFMTxHp82WplwhBlZvLxCJwxQKBG/FgvIM+XEailpDtW5MPzXFBfb5nbjg5hkzHkPkb9QwnGb1KJ9F4fbK0dOqxzLqFg/lrLeOMEU8IWLe0kXdOKjQiOnwoWFScbnHNMGcHaGJqvUMhRGVQ3OFvX0NSGuqmkQNLNpVIqgkCKuhayDAjcLCCVy4A7joRBaClYnb5BAKFrgO/cy6DkuwrH0Bi3WmQQHuGxsGAx52LnZx04d234U6OxmGB4if26Qw5FY1wyONYTFVBK12ADW56QHodptj3otKtcyLAjUzZ71I3TA/ijnwYsHAcgOVX/AmB0sukxglAuKhTGVjCcDG5bI/0JyL1DmTws7tjblyz8bOfGsKq9RyB9JYcerYKWfZ7Yg5Ri/lptZAyjnGaWhcnHGG4/U8jwOQJVWkjEc0pCkid7V1UWoNDlSuNNxB0AaTRSVH3ShxxPgqJrp1WVYhERHBaXAjdBSKG0L93ecoTqW50QlKjS5fMedHVUYFp2Cql/xASyY1e6gReLJmzsquarTgWh2gWH0YGOWvD6AA5VHlk5O4yGnB/GrjYSvvgyNCzKuYqMiKQLyIoNdRBfgWHRsNMkEc+WkmcS3j2m1BU7NJjS455n/lkdoBDSJZxSwXq/iEvxU4530F6IYyKH99uq/ytcUO7XibLTSLEtrklBQcA59pEAhrVbI0zB8psFtMBQJ8iDJmDV1/6DRI4iAoM0djptdD7wQ2lHOa9PhogI7m5W8Ar3vBw0/QXVj2oJL1aAs1evkU49KY7bodtJjeAJMNEJlpjMJk9vT87qGVo2ofjzbV9qrhkQ6Wpq64XpCf/qYEzhI72NetURqsE7qJy/iDi/lpn9fpcLHbqxRtONkd2qDZo+wurqxOjGd6/lE3GMCB099Tl6ojwo/VpdlPpUu2PbouDWxwg6Ckc0RqccqrcyvTZ9M/evWz6pU1+3/1av4L6NXstW7/ZfVq9nvq1Xc+R5WPNvQwFwqZlqyOkDljC9krDtzG+bR/B5LRDJ45QOZ6m9ITiHFZ2vF6LD3wfsQ0BxjE9UYJl9kLl341DePb5etekdLibfTfjz+UwNVb0BTzPWW7tQD32kd+1OHx7maASZddvhdQedrdCVTtOm/SXsj8LkMMSUyVL+cxczwtMbY1IDHWKBLThueV2YHdWPoy9M3kknfjAS0Ab5/KD1Z9+n4rsbwTmvA6b71Bl/ok4c36GNC2N5LE0IcLeTAQDpmIb4baJ963gspzgs6DhkkeIT6mIHupj/PGty85jj5idA8dS5pkQOgw0V0axkARo/GQa7b0/RIeivDhoy+oY5ExeXPry/WtsVzdO+OjkyeTQT66/IPPC3ykR2nx0fy78NF8jB0vFOvvw7J5/RHevvsX</diagram></mxfile>
+<mxfile modified="2020-11-14T03:36:00.601Z" host="app.diagrams.net" agent="5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/78.0.3904.97 Safari/537.36" etag="9Qa4RodFqLfAOAMSeNn5" version="13.9.8" type="github">
+  <diagram id="f106602c-feb2-e66a-4537-3a34d633f6aa" name="Page-1">
+    <mxGraphModel dx="946" dy="591" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1169" pageHeight="827" background="#ffffff" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="14" value="" style="fillColor=#F6F6F6;strokeColor=none;shadow=0;gradientColor=none;fontSize=14;align=left;spacing=10;fontColor=#717171;9E9E9E;verticalAlign=top;spacingTop=-4;fontStyle=0;spacingLeft=40;html=1;" parent="1" vertex="1">
+          <mxGeometry x="230" y="83" width="670" height="321" as="geometry" />
+        </mxCell>
+        <mxCell id="818" value="一点容器云建设" style="fillColor=#4DA1F5;strokeColor=none;shadow=1;gradientColor=none;fontSize=14;align=left;spacingLeft=50;fontColor=#ffffff;html=1;" parent="1" vertex="1">
+          <mxGeometry x="230" y="40" width="670" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="1036" value="&lt;b&gt;&lt;font color=&quot;#000000&quot;&gt;无状态服务&lt;/font&gt;&lt;/b&gt;" style="strokeColor=#dddddd;fillColor=#ffffff;shadow=1;strokeWidth=1;rounded=1;absoluteArcSize=1;arcSize=2;labelPosition=center;verticalLabelPosition=middle;align=center;verticalAlign=top;spacingLeft=0;fontColor=#999999;fontSize=12;whiteSpace=wrap;spacingBottom=2;html=1;" parent="1" vertex="1">
+          <mxGeometry x="250" y="121" width="190" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="1047" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;labelBackgroundColor=none;startFill=1;startSize=4;endArrow=blockThin;endFill=1;endSize=4;jettySize=auto;orthogonalLoop=1;strokeColor=#9E9E9E;strokeWidth=2;fontSize=12;fontColor=#000000;align=left;dashed=0;" parent="1" source="1038" target="1040" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="462.5" y="288" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="1038" value="&lt;font color=&quot;#000000&quot;&gt;&lt;b&gt;有状态服务&lt;/b&gt;&lt;/font&gt;" style="strokeColor=#dddddd;fillColor=#ffffff;shadow=1;strokeWidth=1;rounded=1;absoluteArcSize=1;arcSize=2;labelPosition=center;verticalLabelPosition=middle;align=center;verticalAlign=top;spacingLeft=0;fontColor=#999999;fontSize=12;whiteSpace=wrap;spacingBottom=2;html=1;" parent="1" vertex="1">
+          <mxGeometry x="250" y="238" width="190" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="1048" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;labelBackgroundColor=none;startFill=1;startSize=4;endArrow=blockThin;endFill=1;endSize=4;jettySize=auto;orthogonalLoop=1;strokeColor=#4284F3;strokeWidth=2;fontSize=12;fontColor=#000000;align=left;dashed=0;startArrow=blockThin;" parent="1" source="1040" target="1044" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="1040" value="" style="strokeColor=#dddddd;fillColor=#ffffff;shadow=1;strokeWidth=1;rounded=1;absoluteArcSize=1;arcSize=2;fontSize=11;fontColor=#9E9E9E;align=center;html=1;" parent="1" vertex="1">
+          <mxGeometry x="462" y="238" width="118" height="102" as="geometry" />
+        </mxCell>
+        <mxCell id="1041" value="混合部署" style="dashed=0;connectable=0;html=1;fillColor=#757575;strokeColor=none;shape=mxgraph.gcp2.google_network_edge_cache;part=1;labelPosition=right;verticalLabelPosition=middle;align=left;verticalAlign=middle;spacingLeft=5;fontColor=#000000;fontSize=12;" parent="1040" vertex="1">
+          <mxGeometry y="0.5" width="32" height="32" relative="1" as="geometry">
+            <mxPoint x="5" y="-16" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="bADLB26uzrmKl80SlsUd-1062" value="Stackdriver" style="html=1;fillColor=#5184F3;strokeColor=none;verticalAlign=top;labelPosition=center;verticalLabelPosition=bottom;align=center;spacingTop=-6;fontSize=11;fontStyle=1;fontColor=#999999;shape=mxgraph.gcp2.hexIcon;prIcon=stackdriver" vertex="1" parent="1040">
+          <mxGeometry x="-12" y="21.75" width="66" height="58.5" as="geometry" />
+        </mxCell>
+        <mxCell id="1044" value="" style="shape=mxgraph.gcp2.doubleRect;strokeColor=#dddddd;fillColor=#ffffff;shadow=1;strokeWidth=1;fontSize=11;fontColor=#9E9E9E;align=center;html=1;" parent="1" vertex="1">
+          <mxGeometry x="702" y="138" width="168" height="68" as="geometry" />
+        </mxCell>
+        <mxCell id="1045" value="&lt;font color=&quot;#000000&quot;&gt;服务治理&lt;/font&gt;" style="dashed=0;connectable=0;html=1;fillColor=#5184F3;strokeColor=none;shape=mxgraph.gcp2.hexIcon;prIcon=compute_engine;part=1;labelPosition=right;verticalLabelPosition=middle;align=left;verticalAlign=middle;spacingLeft=5;fontColor=#999999;fontSize=12;" parent="1044" vertex="1">
+          <mxGeometry y="0.5" width="44" height="39" relative="1" as="geometry">
+            <mxPoint x="5" y="-19.5" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="bADLB26uzrmKl80SlsUd-1053" value="" style="strokeColor=#dddddd;shadow=1;strokeWidth=1;rounded=1;absoluteArcSize=1;arcSize=2;" vertex="1" parent="1">
+          <mxGeometry x="270" y="160" width="150" height="44" as="geometry" />
+        </mxCell>
+        <mxCell id="bADLB26uzrmKl80SlsUd-1054" value="Web Services" style="dashed=0;connectable=0;html=1;fillColor=#757575;strokeColor=none;shape=mxgraph.gcp2.frontend_platform_services;part=1;labelPosition=right;verticalLabelPosition=middle;align=left;verticalAlign=middle;spacingLeft=5;fontSize=12;" vertex="1" parent="bADLB26uzrmKl80SlsUd-1053">
+          <mxGeometry y="0.5" width="32" height="32" relative="1" as="geometry">
+            <mxPoint x="5" y="-16" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="bADLB26uzrmKl80SlsUd-1055" value="" style="strokeColor=#dddddd;shadow=1;strokeWidth=1;rounded=1;absoluteArcSize=1;arcSize=2;" vertex="1" parent="1">
+          <mxGeometry x="290" y="270" width="110" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="bADLB26uzrmKl80SlsUd-1056" value="&lt;br&gt;Storage&lt;br&gt;Service&lt;br&gt;" style="dashed=0;connectable=0;html=1;fillColor=#5184F3;strokeColor=none;shape=mxgraph.gcp2.hexIcon;prIcon=cloud_storage;part=1;labelPosition=right;verticalLabelPosition=middle;align=left;verticalAlign=middle;spacingLeft=5;fontColor=#999999;fontSize=12;" vertex="1" parent="bADLB26uzrmKl80SlsUd-1055">
+          <mxGeometry y="0.5" width="44" height="39" relative="1" as="geometry">
+            <mxPoint x="5" y="-19.5" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="bADLB26uzrmKl80SlsUd-1061" value="" style="edgeStyle=orthogonalEdgeStyle;fontSize=12;html=1;endArrow=blockThin;endFill=1;rounded=0;strokeWidth=2;endSize=4;startSize=4;dashed=0;strokeColor=#4284F3;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" target="1044">
+          <mxGeometry width="100" relative="1" as="geometry">
+            <mxPoint x="447" y="170" as="sourcePoint" />
+            <mxPoint x="547" y="170" as="targetPoint" />
+            <Array as="points">
+              <mxPoint x="447" y="172" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
