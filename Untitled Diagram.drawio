@@ -1,21 +1,22 @@
-<mxfile host="app.diagrams.net" modified="2020-12-10T03:31:59.209Z" agent="5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/78.0.3904.97 Safari/537.36" etag="hLoTlK3lBbdGMNgSts93" version="13.9.8" type="github">
+<mxfile host="app.diagrams.net" modified="2020-12-10T06:15:47.832Z" agent="5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/78.0.3904.97 Safari/537.36" etag="AJOsNppOb0ndJ0R-ZFCm" version="13.9.8" type="github">
   <diagram id="kgpKYQtTHZ0yAKxKKP6v" name="Page-1">
-    <mxGraphModel dx="946" dy="591" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+    <mxGraphModel dx="946" dy="542" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
-        <mxCell id="3nuBFxr9cyL0pnOWT2aG-1" value="探测模块" style="shape=umlLifeline;perimeter=lifelinePerimeter;container=1;collapsible=0;recursiveResize=0;rounded=0;shadow=0;strokeWidth=1;" parent="1" vertex="1">
+        <mxCell id="3nuBFxr9cyL0pnOWT2aG-1" value=":探测模块" style="shape=umlLifeline;perimeter=lifelinePerimeter;container=1;collapsible=0;recursiveResize=0;rounded=0;shadow=0;strokeWidth=1;" parent="1" vertex="1">
           <mxGeometry x="36" y="80" width="100" height="300" as="geometry" />
         </mxCell>
         <mxCell id="3nuBFxr9cyL0pnOWT2aG-2" value="" style="points=[];perimeter=orthogonalPerimeter;rounded=0;shadow=0;strokeWidth=1;" parent="3nuBFxr9cyL0pnOWT2aG-1" vertex="1">
-          <mxGeometry x="45" y="70" width="10" height="190" as="geometry" />
+          <mxGeometry x="45" y="60" width="10" height="200" as="geometry" />
         </mxCell>
-        <mxCell id="3nuBFxr9cyL0pnOWT2aG-3" value="Run" style="verticalAlign=bottom;startArrow=oval;endArrow=block;startSize=8;shadow=0;strokeWidth=1;" parent="3nuBFxr9cyL0pnOWT2aG-1" target="3nuBFxr9cyL0pnOWT2aG-2" edge="1">
+        <mxCell id="3nuBFxr9cyL0pnOWT2aG-3" value="Run" style="verticalAlign=bottom;startArrow=oval;endArrow=block;startSize=8;shadow=0;strokeWidth=1;" parent="3nuBFxr9cyL0pnOWT2aG-1" edge="1">
           <mxGeometry relative="1" as="geometry">
-            <mxPoint x="-15" y="70" as="sourcePoint" />
+            <mxPoint x="-15" y="64" as="sourcePoint" />
+            <mxPoint x="45" y="64" as="targetPoint" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="3nuBFxr9cyL0pnOWT2aG-5" value="混部云主机" style="shape=umlLifeline;perimeter=lifelinePerimeter;container=1;collapsible=0;recursiveResize=0;rounded=0;shadow=0;strokeWidth=1;" parent="1" vertex="1">
+        <mxCell id="3nuBFxr9cyL0pnOWT2aG-5" value=":混部云主机" style="shape=umlLifeline;perimeter=lifelinePerimeter;container=1;collapsible=0;recursiveResize=0;rounded=0;shadow=0;strokeWidth=1;" parent="1" vertex="1">
           <mxGeometry x="198" y="80" width="100" height="300" as="geometry" />
         </mxCell>
         <mxCell id="3nuBFxr9cyL0pnOWT2aG-6" value="" style="points=[];perimeter=orthogonalPerimeter;rounded=0;shadow=0;strokeWidth=1;" parent="3nuBFxr9cyL0pnOWT2aG-5" vertex="1">
@@ -27,7 +28,7 @@
             <mxPoint x="240" y="176" as="targetPoint" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="tE2NBLofQE--fBUVy7Vw-1" value="调度模块" style="shape=umlLifeline;perimeter=lifelinePerimeter;container=1;collapsible=0;recursiveResize=0;rounded=0;shadow=0;strokeWidth=1;" vertex="1" parent="1">
+        <mxCell id="tE2NBLofQE--fBUVy7Vw-1" value=":调度模块" style="shape=umlLifeline;perimeter=lifelinePerimeter;container=1;collapsible=0;recursiveResize=0;rounded=0;shadow=0;strokeWidth=1;" vertex="1" parent="1">
           <mxGeometry x="350" y="79" width="100" height="300" as="geometry" />
         </mxCell>
         <mxCell id="tE2NBLofQE--fBUVy7Vw-2" value="" style="points=[];perimeter=orthogonalPerimeter;rounded=0;shadow=0;strokeWidth=1;" vertex="1" parent="tE2NBLofQE--fBUVy7Vw-1">
@@ -42,13 +43,13 @@
         <mxCell id="tE2NBLofQE--fBUVy7Vw-36" value="alt" style="shape=umlFrame;whiteSpace=wrap;html=1;" vertex="1" parent="tE2NBLofQE--fBUVy7Vw-1">
           <mxGeometry x="-180" y="101" width="250" height="171" as="geometry" />
         </mxCell>
-        <mxCell id="tE2NBLofQE--fBUVy7Vw-3" value="报警模块" style="shape=umlLifeline;perimeter=lifelinePerimeter;container=1;collapsible=0;recursiveResize=0;rounded=0;shadow=0;strokeWidth=1;" vertex="1" parent="1">
+        <mxCell id="tE2NBLofQE--fBUVy7Vw-3" value=":报警模块" style="shape=umlLifeline;perimeter=lifelinePerimeter;container=1;collapsible=0;recursiveResize=0;rounded=0;shadow=0;strokeWidth=1;" vertex="1" parent="1">
           <mxGeometry x="520" y="79" width="100" height="300" as="geometry" />
         </mxCell>
         <mxCell id="tE2NBLofQE--fBUVy7Vw-4" value="" style="points=[];perimeter=orthogonalPerimeter;rounded=0;shadow=0;strokeWidth=1;" vertex="1" parent="tE2NBLofQE--fBUVy7Vw-3">
           <mxGeometry x="45" y="129" width="10" height="43" as="geometry" />
         </mxCell>
-        <mxCell id="tE2NBLofQE--fBUVy7Vw-5" value="" style="shape=umlLifeline;perimeter=lifelinePerimeter;container=1;collapsible=0;recursiveResize=0;rounded=0;shadow=0;strokeWidth=1;" vertex="1" parent="1">
+        <mxCell id="tE2NBLofQE--fBUVy7Vw-5" value=":运维" style="shape=umlLifeline;perimeter=lifelinePerimeter;container=1;collapsible=0;recursiveResize=0;rounded=0;shadow=0;strokeWidth=1;" vertex="1" parent="1">
           <mxGeometry x="680" y="79" width="100" height="300" as="geometry" />
         </mxCell>
         <mxCell id="tE2NBLofQE--fBUVy7Vw-6" value="" style="points=[];perimeter=orthogonalPerimeter;rounded=0;shadow=0;strokeWidth=1;" vertex="1" parent="tE2NBLofQE--fBUVy7Vw-5">
@@ -58,7 +59,7 @@
           <mxGeometry x="45" y="209.5" width="10" height="45" as="geometry" />
         </mxCell>
         <mxCell id="tE2NBLofQE--fBUVy7Vw-50" value="" style="shape=actor;whiteSpace=wrap;html=1;" vertex="1" parent="tE2NBLofQE--fBUVy7Vw-5">
-          <mxGeometry x="40" y="5" width="20" height="29" as="geometry" />
+          <mxGeometry x="70" y="5" width="20" height="29" as="geometry" />
         </mxCell>
         <mxCell id="tE2NBLofQE--fBUVy7Vw-11" value="通知调入任务" style="verticalAlign=bottom;endArrow=block;shadow=0;strokeWidth=1;" edge="1" parent="1">
           <mxGeometry relative="1" as="geometry">
@@ -111,9 +112,9 @@
             <mxPoint as="offset" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="tE2NBLofQE--fBUVy7Vw-25" value="" style="verticalAlign=bottom;endArrow=block;entryX=0;entryY=0;shadow=0;strokeWidth=1;" edge="1" parent="1">
+        <mxCell id="tE2NBLofQE--fBUVy7Vw-25" value="" style="verticalAlign=bottom;endArrow=block;entryX=0;entryY=0;shadow=0;strokeWidth=1;exitX=0.9;exitY=0.814;exitDx=0;exitDy=0;exitPerimeter=0;" edge="1" parent="1" source="tE2NBLofQE--fBUVy7Vw-4">
           <mxGeometry relative="1" as="geometry">
-            <mxPoint x="591" y="244" as="sourcePoint" />
+            <mxPoint x="580" y="244" as="sourcePoint" />
             <mxPoint x="727" y="244.0000000000001" as="targetPoint" />
           </mxGeometry>
         </mxCell>
@@ -122,7 +123,7 @@
             <mxPoint as="offset" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="tE2NBLofQE--fBUVy7Vw-26" value="" style="verticalAlign=bottom;endArrow=block;entryX=0;entryY=0;shadow=0;strokeWidth=1;" edge="1" parent="1">
+        <mxCell id="tE2NBLofQE--fBUVy7Vw-26" value="" style="verticalAlign=bottom;endArrow=block;entryX=0;entryY=0;shadow=0;strokeWidth=1;" edge="1" parent="1" source="tE2NBLofQE--fBUVy7Vw-3">
           <mxGeometry relative="1" as="geometry">
             <mxPoint x="590" y="313" as="sourcePoint" />
             <mxPoint x="726" y="313.0000000000001" as="targetPoint" />
@@ -130,7 +131,7 @@
         </mxCell>
         <mxCell id="tE2NBLofQE--fBUVy7Vw-52" value="电话告警" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="tE2NBLofQE--fBUVy7Vw-26">
           <mxGeometry x="-0.2206" y="2" relative="1" as="geometry">
-            <mxPoint x="7" as="offset" />
+            <mxPoint x="9.5" as="offset" />
           </mxGeometry>
         </mxCell>
         <mxCell id="tE2NBLofQE--fBUVy7Vw-37" value="&amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; [cpu &amp;lt; 25]" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;" vertex="1" parent="1">
@@ -147,6 +148,9 @@
         </mxCell>
         <mxCell id="tE2NBLofQE--fBUVy7Vw-47" value="" style="points=[];perimeter=orthogonalPerimeter;rounded=0;shadow=0;strokeWidth=1;" vertex="1" parent="1">
           <mxGeometry x="565" y="287" width="10" height="43" as="geometry" />
+        </mxCell>
+        <mxCell id="tE2NBLofQE--fBUVy7Vw-53" value="&lt;font style=&quot;font-size: 8px&quot;&gt;loop&lt;br&gt;&lt;font&gt;[gap=3min&lt;/font&gt;]&lt;/font&gt;" style="shape=umlFrame;whiteSpace=wrap;html=1;width=72;height=41;" vertex="1" parent="1">
+          <mxGeometry x="6" y="159" width="774" height="220" as="geometry" />
         </mxCell>
       </root>
     </mxGraphModel>
